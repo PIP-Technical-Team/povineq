@@ -1,4 +1,99 @@
 {
   "schemaVersion": "compound-gpid-roadmap-v1",
-  "milestones": []
+  "milestones": [
+    {
+      "id": "v1-full-pipr-parity",
+      "title": "v1.0 — Full pipr parity",
+      "objective": "Implement a Python PIP API wrapper with full parity to the pipr R package (excluding get_gd) and publish to PyPI.",
+      "status": "planned",
+      "features": [
+        {
+          "id": "architecture-and-stack-design",
+          "title": "Architecture and stack design",
+          "status": "planned",
+          "plan": ".cg-docs/brainstorms/2026-03-31-povineq-architecture-and-stack.md"
+        },
+        {
+          "id": "package-scaffolding",
+          "title": "Package scaffolding",
+          "status": "idea",
+          "plan": null
+        },
+        {
+          "id": "core-infrastructure",
+          "title": "Core infrastructure",
+          "status": "idea",
+          "plan": null
+        },
+        {
+          "id": "core-stats-functions",
+          "title": "Core stats functions (get_stats, get_wb, get_agg)",
+          "status": "idea",
+          "plan": null
+        },
+        {
+          "id": "country-profile-functions",
+          "title": "Country profile functions (get_cp, get_cp_ki)",
+          "status": "idea",
+          "plan": null
+        },
+        {
+          "id": "auxiliary-data-functions",
+          "title": "Auxiliary data functions (get_aux and all convenience wrappers)",
+          "status": "idea",
+          "plan": null
+        },
+        {
+          "id": "utility-functions",
+          "title": "Utility functions (check_api, get_versions, get_pip_info, cache helpers)",
+          "status": "idea",
+          "plan": null
+        },
+        {
+          "id": "tests",
+          "title": "Tests (pytest suite mirroring pipr test suite)",
+          "status": "idea",
+          "plan": null
+        },
+        {
+          "id": "documentation-and-readme",
+          "title": "Documentation and README",
+          "status": "idea",
+          "plan": null
+        },
+        {
+          "id": "pypi-publishing-and-ci-cd",
+          "title": "PyPI publishing and CI/CD",
+          "status": "idea",
+          "plan": null
+        }
+      ]
+    },
+    {
+      "id": "v2-extended-features",
+      "title": "v2.0 — Extended features",
+      "objective": "Add grouped data support (get_gd), a CLI, and async support beyond pipr parity.",
+      "status": "planned",
+      "features": [
+        {
+          "id": "get-gd-grouped-data",
+          "title": "get_gd — grouped data from user-supplied distributions",
+          "status": "idea",
+          "plan": null
+        },
+        {
+          "id": "cli",
+          "title": "CLI (thin wrapper around core functions)",
+          "status": "idea",
+          "plan": null
+        },
+        {
+          "id": "async-support",
+          "title": "Async support",
+          "status": "idea",
+          "plan": null
+        }
+      ]
+    }
+  ]
 }
