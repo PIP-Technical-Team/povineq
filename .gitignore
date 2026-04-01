@@ -8,8 +8,8 @@
 # Compound GPID local config (user-specific, never commit)
 compound-gpid.local.md
 
-# Compound GPID knowledge artifacts (generated, not part of the package)
-.cg-docs/
+# Compound GPID knowledge artifacts — committed except machine-local files
+.cg-docs/**/*.local.md
 
 # Python build artefacts
 __pycache__/
@@ -18,6 +18,10 @@ __pycache__/
 dist/
 build/
 .eggs/
+
+# MkDocs build output
+site/
+docs/reference/
 
 # Test and coverage artefacts
 .coverage
