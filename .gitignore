@@ -8,3 +8,25 @@
 # Compound GPID local config (user-specific, never commit)
 compound-gpid.local.md
 
+# Python build artefacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Test and coverage artefacts
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Editor / OS
+.DS_Store
+

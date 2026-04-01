@@ -5,67 +5,67 @@
       "id": "v1-full-pipr-parity",
       "title": "v1.0 — Full pipr parity",
       "objective": "Implement a Python PIP API wrapper with full parity to the pipr R package (excluding get_gd) and publish to PyPI.",
-      "status": "planned",
+      "status": "in-progress",
       "features": [
         {
           "id": "architecture-and-stack-design",
           "title": "Architecture and stack design",
-          "status": "planned",
+          "status": "done",
           "plan": ".cg-docs/brainstorms/2026-03-31-povineq-architecture-and-stack.md"
         },
         {
           "id": "package-scaffolding",
           "title": "Package scaffolding",
-          "status": "idea",
-          "plan": null
+          "status": "done",
+          "plan": ".cg-docs/plans/2026-03-31-povineq-v1-full-implementation.md"
         },
         {
           "id": "core-infrastructure",
           "title": "Core infrastructure",
-          "status": "idea",
-          "plan": null
+          "status": "done",
+          "plan": ".cg-docs/plans/2026-03-31-povineq-v1-full-implementation.md"
         },
         {
           "id": "core-stats-functions",
           "title": "Core stats functions (get_stats, get_wb, get_agg)",
-          "status": "idea",
-          "plan": null
+          "status": "done",
+          "plan": ".cg-docs/plans/2026-03-31-povineq-v1-full-implementation.md"
         },
         {
           "id": "country-profile-functions",
           "title": "Country profile functions (get_cp, get_cp_ki)",
-          "status": "idea",
-          "plan": null
+          "status": "done",
+          "plan": ".cg-docs/plans/2026-03-31-povineq-v1-full-implementation.md"
         },
         {
           "id": "auxiliary-data-functions",
           "title": "Auxiliary data functions (get_aux and all convenience wrappers)",
-          "status": "idea",
-          "plan": null
+          "status": "done",
+          "plan": ".cg-docs/plans/2026-03-31-povineq-v1-full-implementation.md"
         },
         {
           "id": "utility-functions",
           "title": "Utility functions (check_api, get_versions, get_pip_info, cache helpers)",
-          "status": "idea",
-          "plan": null
+          "status": "done",
+          "plan": ".cg-docs/plans/2026-03-31-povineq-v1-full-implementation.md"
         },
         {
           "id": "tests",
           "title": "Tests (pytest suite mirroring pipr test suite)",
-          "status": "idea",
-          "plan": null
+          "status": "done",
+          "plan": ".cg-docs/plans/2026-03-31-povineq-v1-full-implementation.md"
         },
         {
           "id": "documentation-and-readme",
           "title": "Documentation and README",
-          "status": "idea",
-          "plan": null
+          "status": "done",
+          "plan": ".cg-docs/plans/2026-03-31-povineq-v1-full-implementation.md"
         },
         {
           "id": "pypi-publishing-and-ci-cd",
           "title": "PyPI publishing and CI/CD",
-          "status": "idea",
-          "plan": null
+          "status": "planned",
+          "plan": ".cg-docs/plans/2026-03-31-povineq-v1-full-implementation.md"
         }
       ]
     },
