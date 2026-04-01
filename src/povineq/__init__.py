@@ -64,7 +64,7 @@ try:
     from importlib.metadata import version
 
     __version__ = version("povineq")
-except Exception:
+except ImportError:
     __version__ = "0.1.0"  # fallback when package is not installed (e.g. editable source)
 
 __all__ = [  # noqa: RUF022

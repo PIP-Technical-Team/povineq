@@ -1,13 +1,11 @@
-"""HTTP client setup using httpx + hishel (caching) with retry logic."""
+"""HTTP client setup using httpx with connection-pool reuse and retry logic."""
 
 from __future__ import annotations
 
 import os
 
-import hishel
 import httpx
 
-from povineq._cache import _cache_dir
 from povineq._constants import ENV_DEV_URL, ENV_QA_URL, PROD_URL, USER_AGENT
 
 
@@ -40,11 +38,10 @@ def select_base_url(server: str | None) -> str:
 
 
 def get_client(server: str | None = None) -> httpx.Client:
-    """Return a configured httpx client with caching and automatic retry.
+    """Return a configured httpx client with connection-pool reuse and automatic retry.
 
-    The client uses :mod:`hishel` for RFC 7234 HTTP caching and retries up to
-    3 times on transient connection errors (not on rate limits — those are
-    handled separately by the request layer).
+    Retries up to 3 times on transient connection errors (not on rate limits —
+    those are handled separately by the request layer).
 
     Args:
         server: Server target — ``None``/``"prod"``, ``"qa"``, or ``"dev"``.
@@ -53,16 +50,9 @@ def get_client(server: str | None = None) -> httpx.Client:
         A ready-to-use :class:`httpx.Client`.
     """
     base_url = select_base_url(server)
-    storage = hishel.FileStorage(base_path=_cache_dir())
-    controller = hishel.Controller(allow_stale=True)
-    transport = hishel.CacheTransport(
-        transport=httpx.HTTPTransport(retries=3),
-        storage=storage,
-        controller=controller,
-    )
     return httpx.Client(
         base_url=base_url,
-        transport=transport,
+        transport=httpx.HTTPTransport(retries=3),
         headers={"User-Agent": USER_AGENT},
         timeout=60.0,
     )

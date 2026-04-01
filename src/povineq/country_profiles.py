@@ -57,7 +57,7 @@ def get_cp(
         >>> df = povineq.get_cp(country="AGO")
         >>> df_all = povineq.get_cp()
     """
-    logger.debug(f"get_cp(country={country!r}, povline={povline}, ppp_version={ppp_version})")
+    logger.debug("get_cp", country=country, povline=povline, ppp_version=ppp_version)
 
     params = CpParams(
         country=country,
@@ -119,7 +119,7 @@ def get_cp_ki(
         >>> import povineq
         >>> df = povineq.get_cp_ki(country="IDN")
     """
-    logger.debug(f"get_cp_ki(country={country!r}, povline={povline})")
+    logger.debug("get_cp_ki", country=country, povline=povline)
 
     params = CpKiParams(
         country=country,
@@ -202,9 +202,8 @@ def unnest_ki(raw: dict | list) -> pd.DataFrame:
 
     # Deduplicate GNI and GDP growth on key columns (pipr behaviour)
     merge_cols = ["country_code", "reporting_year"]
-    for df_ref in (gni, gdp_growth):
-        if not df_ref.empty and all(c in df_ref.columns for c in merge_cols):
-            df_ref.drop_duplicates(subset=merge_cols, inplace=True)
+    gni = gni.drop_duplicates(subset=merge_cols) if not gni.empty and all(c in gni.columns for c in merge_cols) else gni
+    gdp_growth = gdp_growth.drop_duplicates(subset=merge_cols) if not gdp_growth.empty and all(c in gdp_growth.columns for c in merge_cols) else gdp_growth
 
     # Merge all on (country_code, reporting_year) with full outer joins
     # Merge all sub-tables on (country_code, reporting_year) using outer joins.

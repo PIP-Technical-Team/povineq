@@ -144,3 +144,19 @@ class TestConvenienceWrappers:
             fn()
 
         assert calls[0] == table
+
+
+class TestGetAuxAssignTbEdgeCases:
+    """P2.15 — assign_tb=True with simplify=False should warn and NOT store."""
+
+    def test_assign_tb_simplify_false_does_not_store(self):
+        from povineq._response import PIPResponse
+
+        data = [{"country_code": "AGO", "gdp": 3000.0}]
+        resp = _mock_resp(data)
+        with patch("povineq.auxiliary.build_and_execute", return_value=resp):
+            result = get_aux("gdp", assign_tb=True, simplify=False)
+
+        # Should return PIPResponse (not stored), and store should be empty
+        assert isinstance(result, PIPResponse)
+        assert "gdp" not in _store

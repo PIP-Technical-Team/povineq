@@ -133,3 +133,37 @@ class TestRenameColsDuplicateTargets:
         result = rename_cols(df, ["a", "b"], ["x", "x"])
         # After rename: "a"→"x" then "b"→"x" — pandas produces two "x" columns
         assert "x" in result.columns
+
+class TestRenameColsEmptyLists:
+    """P2.17 — rename_cols with empty old/new lists is a no-op."""
+
+    def test_empty_lists_return_unchanged(self):
+        df = pd.DataFrame({"a": [1], "b": [2]})
+        result = rename_cols(df, [], [])
+        assert list(result.columns) == ["a", "b"]
+
+
+class TestChangeGroupedStatsCsvEmptyDeciles:
+    """P2.16 — empty decile list edge cases."""
+
+    def test_row_with_empty_list_treated_as_null(self):
+        """A cell with [] is not a valid decile container (length 0); treated as null."""
+        df = pd.DataFrame({
+            "country": ["AGO", "ALB"],
+            "deciles": [[0.1, 0.2, 0.3], []],
+        })
+        # If lengths differ (3 vs 0), should raise
+        with pytest.raises(ValueError, match="different list lengths"):
+            change_grouped_stats_to_csv(df)
+
+    def test_all_empty_lists_drop_column(self):
+        """DataFrame where every deciles cell is [] drops the column gracefully."""
+        df = pd.DataFrame({
+            "country": ["AGO"],
+            "deciles": [[]],
+        })
+        # [] is a list/tuple of length 0 — valid mask hits, but valid_lengths is all 0
+        # n_deciles = 0 → produces no decile columns, just drops deciles
+        result = change_grouped_stats_to_csv(df)
+        assert "deciles" not in result.columns
+        assert "country" in result.columns

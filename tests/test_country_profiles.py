@@ -165,3 +165,75 @@ class TestUnnestKi:
         raw = [{"headcount": [{"country_code": "IDN", "reporting_year": 2019, "headcount": 0.1}]}]
         df = unnest_ki(raw)
         assert isinstance(df, pd.DataFrame)
+
+
+class TestGetCpWithCountryList:
+    """P2.18 — get_cp() with a list of country codes."""
+
+    @pytest.fixture()
+    def cp_resp(self):
+        records = [{"country_code": "AGO", "reporting_year": 2000, "headcount": 0.5}]
+        table = pa.Table.from_pydict({k: [r[k] for r in records] for k in records[0]})
+        buf = io.BytesIO()
+        writer = ipc.new_file(buf, table.schema)
+        writer.write_table(table)
+        writer.close()
+        resp = MagicMock()
+        resp.content = buf.getvalue()
+        resp.text = ""
+        resp.headers = {"content-type": "application/vnd.apache.arrow.file"}
+        resp.status_code = 200
+        resp.url = "https://api.worldbank.org/pip/v1/cp-download"
+        resp.is_error = False
+        return resp
+
+    def test_list_joined_as_comma_separated(self, cp_resp):
+        calls = []
+        def capture(endpoint, params, **kwargs):
+            calls.append(params)
+            return cp_resp
+
+        with patch("povineq.country_profiles.build_and_execute", side_effect=capture):
+            get_cp(country=["AGO", "ALB"])
+
+        assert "," in calls[0].get("country", "")
+        assert "AGO" in calls[0]["country"]
+        assert "ALB" in calls[0]["country"]
+
+
+class TestUnnestKiNestingPatterns:
+    """P2.19 — unnest_ki handles multiple nesting structures."""
+
+    def test_empty_list_input_returns_empty_df(self):
+        df = unnest_ki([])
+        assert isinstance(df, pd.DataFrame)
+        assert len(df) == 0
+
+    def test_missing_keys_returns_partial_df(self):
+        """Raw dict with only some keys present should not raise."""
+        raw = {
+            "headcount": [{"country_code": "IDN", "reporting_year": 2019, "headcount": 0.1}],
+        }
+        df = unnest_ki(raw)
+        assert isinstance(df, pd.DataFrame)
+        assert "country_code" in df.columns
+
+    def test_value_as_dict_wraps_to_single_row(self):
+        """When a key's value is a plain dict, it should be wrapped to one row."""
+        raw = {
+            "headcount": {"country_code": "IDN", "reporting_year": 2019, "headcount": 0.1},
+        }
+        df = unnest_ki(raw)
+        assert isinstance(df, pd.DataFrame)
+        assert len(df) >= 1
+
+    def test_mixed_null_tables_handled(self):
+        """Tables that are None should be treated as empty."""
+        raw = {
+            "headcount": [{"country_code": "IDN", "reporting_year": 2019, "headcount": 0.1}],
+            "gni": None,
+            "gdp_growth": None,
+        }
+        df = unnest_ki(raw)
+        assert isinstance(df, pd.DataFrame)
+        assert "country_code" in df.columns

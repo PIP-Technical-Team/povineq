@@ -47,7 +47,7 @@ def delete_cache() -> None:
     if hasattr(_cache_dir, "cache_clear"):
         _cache_dir.cache_clear()
     cache_path.mkdir(parents=True, exist_ok=True)
-    logger.info(f"All {len(cached)} cached item(s) have been deleted.")
+    logger.info("All {} cached item(s) have been deleted.", len(cached))
 
 
 def get_cache_info() -> dict[str, object]:

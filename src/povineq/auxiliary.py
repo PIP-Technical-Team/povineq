@@ -87,7 +87,7 @@ def get_aux(
             # the cell value is the list itself — unwrap it when needed.
             raw = result["tables"].iloc[0]
             tables_list: list[str] = raw if isinstance(raw, list) else result["tables"].tolist()
-            logger.info(f"Available auxiliary tables: {tables_list}")
+            logger.info("Available auxiliary tables", tables=tables_list)
             return tables_list
 
         return result  # type: ignore[return-value]
@@ -161,9 +161,7 @@ def display_aux(
     )
 
     if isinstance(result, list):
-        logger.info("Available auxiliary tables:")
-        for t in result:
-            logger.info(f"  - {t}")
+        logger.info("Available auxiliary tables", tables=result)
         return result
 
     return result  # type: ignore[return-value]

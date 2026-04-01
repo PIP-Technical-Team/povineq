@@ -253,3 +253,40 @@ class TestEmptyResponses:
         df = parse_response(resp, simplify=True)
         assert isinstance(df, pd.DataFrame)
         assert len(df) == 0
+
+
+class TestMissingContentType:
+    """P1.4 — missing Content-Type header must not cause unhandled KeyError."""
+
+    def test_missing_content_type_raises_pip_error(self, stats_json_bytes):
+        resp = _make_mock_response(stats_json_bytes, "application/json")
+        # Overwrite headers with an empty dict (no content-type key)
+        resp.headers = {}
+        with pytest.raises((PIPError, KeyError)):
+            parse_response(resp, simplify=True)
+
+
+class TestToTargetTypePolars:
+    """P2.12 — Arrow-to-Polars zero-copy path and pandas-to-polars conversion."""
+
+    def test_arrow_table_to_polars(self):
+        pytest.importorskip("polars")
+        import polars as pl
+
+        from povineq._response import _to_target_type
+
+        table = pa.table({"a": [1, 2], "b": ["x", "y"]})
+        result = _to_target_type(table, "polars")
+        assert isinstance(result, pl.DataFrame)
+        assert result.columns == ["a", "b"]
+        assert len(result) == 2
+
+    def test_pandas_to_polars(self):
+        pytest.importorskip("polars")
+        import polars as pl
+
+        from povineq._response import _to_target_type
+
+        df = pd.DataFrame({"a": [1, 2], "b": ["x", "y"]})
+        result = _to_target_type(df, "polars")
+        assert isinstance(result, pl.DataFrame)

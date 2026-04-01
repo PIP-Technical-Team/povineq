@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal
+from typing import Literal
 
 import pandas as pd
 from loguru import logger
@@ -11,9 +11,6 @@ from povineq._constants import API_VERSION, ENDPOINT_PIP, ENDPOINT_PIP_GRP
 from povineq._request import build_and_execute
 from povineq._response import PIPResponse, parse_response
 from povineq._validation import AggParams, StatsParams
-
-if TYPE_CHECKING:
-    pass
 
 
 def get_stats(
@@ -84,9 +81,14 @@ def get_stats(
         >>> df = povineq.get_stats(country="all", subgroup="wb_regions")
     """
     logger.debug(
-        f"get_stats(country={country!r}, year={year!r}, povline={povline}, "
-        f"popshare={popshare}, fill_gaps={fill_gaps}, nowcast={nowcast}, "
-        f"subgroup={subgroup!r})"
+        "get_stats",
+        country=country,
+        year=year,
+        povline=povline,
+        popshare=popshare,
+        fill_gaps=fill_gaps,
+        nowcast=nowcast,
+        subgroup=subgroup,
     )
 
     # Validate and apply business rules via pydantic

@@ -176,3 +176,54 @@ class TestGetAgg:
             get_agg(aggregate="fcv")
 
         assert calls[0].get("aggregate") == "fcv"
+
+
+class TestGetStatsEdgeCases:
+    """P2.14 — parameter interaction edge cases."""
+
+    def _mock_resp(self, data: list):
+        resp = MagicMock()
+        resp.content = json.dumps(data).encode()
+        resp.text = json.dumps(data)
+        resp.headers = {"content-type": "application/json"}
+        resp.status_code = 200
+        resp.is_error = False
+        resp.url = "https://api.worldbank.org/pip/v1/pip"
+        return resp
+
+    @pytest.mark.parametrize("countries,years", [
+        (["AGO", "ALB"], 2000),
+        ("AGO", [2000, 2010]),
+        (["AGO", "ALB"], [2000, 2010]),
+    ])
+    def test_list_inputs_produce_single_call(self, countries, years):
+        """Multiple countries/years as lists should produce a single API call."""
+        data = [{"country_code": "AGO", "reporting_year": 2000, "headcount": 0.5, "estimate_type": "survey"}]
+        resp = self._mock_resp(data)
+        calls = []
+
+        def capture(endpoint, params, **kwargs):
+            calls.append(params)
+            return resp
+
+        with patch("povineq.stats.build_and_execute", side_effect=capture):
+            result = get_stats(country=countries, year=years)
+
+        assert len(calls) == 1
+        assert isinstance(result, pd.DataFrame)
+
+    def test_subgroup_with_fill_gaps_routes_to_pip_grp(self):
+        from povineq._constants import ENDPOINT_PIP_GRP
+
+        data = [{"country_code": "SSA", "reporting_year": 2019, "headcount": 0.4, "estimate_type": "survey"}]
+        resp = self._mock_resp(data)
+        calls = []
+
+        def capture(endpoint, params, **kwargs):
+            calls.append(endpoint)
+            return resp
+
+        with patch("povineq.stats.build_and_execute", side_effect=capture):
+            get_stats(subgroup="wb_regions", fill_gaps=True)
+
+        assert calls[0] == ENDPOINT_PIP_GRP

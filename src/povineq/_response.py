@@ -5,7 +5,7 @@ from __future__ import annotations
 import io
 import json
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal
+from typing import Literal
 
 import httpx
 import pandas as pd
@@ -16,9 +16,6 @@ from loguru import logger
 from povineq._constants import COLUMN_RENAMES
 from povineq._errors import PIPError
 from povineq.utils import change_grouped_stats_to_csv, rename_cols
-
-if TYPE_CHECKING:
-    pass
 
 
 @dataclass

@@ -124,7 +124,7 @@ def build_and_execute(
     client = get_client(server)
     for attempt in range(_MAX_RATE_RETRIES + 1):
         try:
-            logger.debug(f"GET {url} params={params}")
+            logger.debug("GET request", url=url, params=params)
             response = client.get(url, params=params)
         except httpx.RequestError as exc:
             raise PIPConnectionError(
@@ -138,7 +138,7 @@ def build_and_execute(
             if attempt >= _MAX_RATE_RETRIES:
                 raise PIPRateLimitError(wait)
 
-            logger.warning(f"Rate limit hit. Waiting {wait:.0f}s before retry {attempt + 1}.")
+            logger.warning("Rate limit hit", wait_seconds=round(wait), attempt=attempt + 1)
             time.sleep(wait if wait > 0 else 1)
             continue
 

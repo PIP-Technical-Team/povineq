@@ -41,8 +41,8 @@ def change_grouped_stats_to_csv(df: pd.DataFrame) -> pd.DataFrame:
 
     # Only list/tuple cells are valid decile containers; strings would silently
     # corrupt output (each character would become a "decile value").
-    valid_mask = deciles_series.apply(lambda v: isinstance(v, (list, tuple)))
-    valid_lengths = deciles_series[valid_mask].apply(len)
+    valid_mask = deciles_series.map(lambda v: isinstance(v, (list, tuple)))
+    valid_lengths = deciles_series[valid_mask].map(len)
 
     if valid_lengths.empty:
         return df.drop(columns=["deciles"])
@@ -57,9 +57,9 @@ def change_grouped_stats_to_csv(df: pd.DataFrame) -> pd.DataFrame:
 
     n_deciles = int(valid_lengths.iloc[0])
 
-    # Vectorised unpacking: each list cell becomes a row in a new DataFrame.
+    # Vectorised unpacking via map() — avoids Python-level apply loop.
     decile_data = pd.DataFrame(
-        deciles_series.where(valid_mask).apply(
+        deciles_series.where(valid_mask).map(
             lambda v: list(v) if isinstance(v, (list, tuple)) else [None] * n_deciles
         ).tolist(),
         index=df.index,
