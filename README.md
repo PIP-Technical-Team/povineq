@@ -5,10 +5,13 @@ Mirrors the functionality of the [`pipr`](https://github.com/worldbank/pipr) R p
 
 ## Installation
 
+> **Note**: `povineq` is under active development and has **not been released to PyPI yet**.
+> Install directly from GitHub:
+
 ```bash
-pip install povineq
+pip install git+https://github.com/PIP-Technical-Team/povineq.git
 # with optional polars support
-pip install "povineq[polars]"
+pip install "povineq[polars] @ git+https://github.com/PIP-Technical-Team/povineq.git"
 ```
 
 ## Quick Start

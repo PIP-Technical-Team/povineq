@@ -14,21 +14,18 @@ and understanding the result.
 
 ## Installation
 
-Install the package from PyPI:
-
-!!! note "Pre-release"
-    `povineq` is in active development. If `pip install povineq` fails,
-    install directly from source:
-    `pip install git+https://github.com/PIP-Technical-Team/povineq.git`
+!!! warning "Not available on PyPI"
+    `povineq` is under active development and has **not been released to PyPI yet**.
+    Install directly from GitHub:
 
 ```bash
-pip install povineq
+pip install git+https://github.com/PIP-Technical-Team/povineq.git
 ```
 
 For [polars](https://pola.rs/) support alongside the default pandas output:
 
 ```bash
-pip install "povineq[polars]"
+pip install "povineq[polars] @ git+https://github.com/PIP-Technical-Team/povineq.git"
 ```
 
 ---
