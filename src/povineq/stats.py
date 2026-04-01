@@ -40,7 +40,7 @@ def get_stats(
     Args:
         country: ISO3 country code(s) or ``"all"``.
         year: Survey year(s) or ``"all"``.
-        povline: Poverty line in 2017 PPP USD per day.
+        povline: Poverty line in 2021 PPP USD per day.
         popshare: Proportion of the population below the poverty line.
             When set, *povline* is ignored.
         fill_gaps: If ``True``, interpolate/extrapolate values for years

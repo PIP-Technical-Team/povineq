@@ -22,7 +22,7 @@ ENV_DEV_URL: str = "PIP_DEV_URL"
 # Default parameter values
 DEFAULT_COUNTRY: str = "all"
 DEFAULT_YEAR: str = "all"
-DEFAULT_POVLINE_CP: float = 2.15
+DEFAULT_POVLINE_CP: float = 3
 DEFAULT_POVLINE_CP_2011: float = 1.9
 DEFAULT_PPP_VERSION: int = 2017
 DEFAULT_FORMAT: str = "arrow"
