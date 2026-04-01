@@ -39,7 +39,13 @@ def test_all_list_is_subset_of_dir():
 
 
 def test_exception_hierarchy():
-    from povineq import PIPAPIError, PIPConnectionError, PIPError, PIPRateLimitError, PIPValidationError
+    from povineq import (
+        PIPAPIError,
+        PIPConnectionError,
+        PIPError,
+        PIPRateLimitError,
+        PIPValidationError,
+    )
 
     assert issubclass(PIPAPIError, PIPError)
     assert issubclass(PIPRateLimitError, PIPError)

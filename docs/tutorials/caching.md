@@ -95,5 +95,5 @@ Alternatively, `delete_cache()` before the call.
 
 ## API Reference
 
-See [`povineq._cache`](../reference/cache.md) for the full documentation of
+See [`povineq._cache`](../reference/internal/cache.md) for the full documentation of
 `delete_cache()` and `get_cache_info()`.

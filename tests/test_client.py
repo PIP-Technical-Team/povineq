@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import pytest
-
 import httpx
+import pytest
 
 from povineq._client import get_client, select_base_url
 from povineq._constants import PROD_URL, USER_AGENT

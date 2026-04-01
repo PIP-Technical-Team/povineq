@@ -7,7 +7,6 @@ from pydantic import ValidationError
 
 from povineq._validation import AggParams, AuxParams, CpKiParams, CpParams, StatsParams
 
-
 # ---------------------------------------------------------------------------
 # StatsParams
 # ---------------------------------------------------------------------------
@@ -208,7 +207,7 @@ class TestStatsParamsBoundary:
             StatsParams(subgroup=subgroup)
 
     def test_subgroup_with_povline_clears_fill_gaps(self):
-        """subgroup should clear fill_gaps and nowcast regardless of other params."""
+        """Subgroup should clear fill_gaps and nowcast regardless of other params."""
         p = StatsParams(subgroup="wb_regions", povline=2.15, fill_gaps=True)
         assert p.fill_gaps is None
         assert p.nowcast is None

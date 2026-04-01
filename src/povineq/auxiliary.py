@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Callable, Literal
+from collections.abc import Callable
+from typing import Literal
 
 import pandas as pd
 from loguru import logger
@@ -189,7 +190,7 @@ def call_aux(table: str | None = None) -> pd.DataFrame | list[str]:
     return _call_aux_store(table)
 
 
-def _make_aux_getter(table_name: str, table_description: str) -> "Callable":
+def _make_aux_getter(table_name: str, table_description: str) -> Callable:
     """Factory that generates a typed convenience wrapper around :func:`get_aux`.
 
     Each generated function fetches a single named auxiliary table and documents
@@ -215,7 +216,7 @@ def _make_aux_getter(table_name: str, table_description: str) -> "Callable":
         simplify: bool = True,
         server: str | None = None,
         dataframe_type: Literal["pandas", "polars"] = "pandas",
-    ) -> "pd.DataFrame | PIPResponse":
+    ) -> pd.DataFrame | PIPResponse:
         return get_aux(
             table=table_name,
             version=version,

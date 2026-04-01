@@ -80,9 +80,9 @@ def stats_json_bytes() -> bytes:
 def stats_csv_bytes() -> bytes:
     """Minimal CSV response for get_stats."""
     return (
-        "country_code,reporting_year,reporting_level,welfare_type,headcount,poverty_gap,estimate_type\n"
-        "AGO,2000,national,consumption,0.544,0.218,survey\n"
-    ).encode()
+        b"country_code,reporting_year,reporting_level,welfare_type,headcount,poverty_gap,estimate_type\n"
+        b"AGO,2000,national,consumption,0.544,0.218,survey\n"
+    )
 
 
 @pytest.fixture()
