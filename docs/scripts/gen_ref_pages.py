@@ -9,9 +9,10 @@ export public types are written to reference/internal/<name>.md.
 import warnings
 from pathlib import Path
 
-import mkdocs_gen_files
+import mkdocs_gen_files  # type: ignore[import-not-found]  # pylint: disable=import-error
 
 PACKAGE_NAME = "povineq"
+# pylint: disable=redefined-outer-name  # function params share names with module-level loop variables
 
 nav = mkdocs_gen_files.Nav()
 mod_root = Path("src", PACKAGE_NAME)
@@ -36,14 +37,14 @@ internal_public = [
 _excluded_from_docs = {"utils"}
 
 
-def _module_metadata(mod_name: str) -> tuple[str, str, str]:
+def _module_metadata(name: str) -> tuple[str, str, str]:
     """Return (doc_name, identifier, title) for a given module name."""
-    if mod_name == "__init__":
+    if name == "__init__":
         return "index", PACKAGE_NAME, f"{PACKAGE_NAME} (top-level)"
-    if mod_name.startswith("_"):
-        doc_name = mod_name.removeprefix("_")
-        return doc_name, f"{PACKAGE_NAME}.{mod_name}", doc_name.replace("_", " ").title()
-    return mod_name, f"{PACKAGE_NAME}.{mod_name}", mod_name.replace("_", " ").title()
+    if name.startswith("_"):
+        doc = name.removeprefix("_")
+        return doc, f"{PACKAGE_NAME}.{name}", doc.replace("_", " ").title()
+    return name, f"{PACKAGE_NAME}.{name}", name.replace("_", " ").title()
 
 
 for mod_name in public_modules:

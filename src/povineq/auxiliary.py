@@ -21,7 +21,7 @@ def get_aux(
     ppp_version: int | None = None,
     release_version: str | None = None,
     api_version: str = API_VERSION,
-    format: str = "json",
+    fmt: str = "json",
     simplify: bool = True,
     server: str | None = None,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
@@ -40,7 +40,7 @@ def get_aux(
         ppp_version: PPP base year.
         release_version: Release date in ``YYYYMMDD`` format.
         api_version: API version.
-        format: Response format — ``"json"`` (default) or ``"csv"``.
+        fmt: Response format — ``"json"`` (default) or ``"csv"``.
             Arrow is not supported for auxiliary tables.
         simplify: If ``True`` (default), return a DataFrame.
         server: Server target.
@@ -68,7 +68,7 @@ def get_aux(
         ppp_version=ppp_version,
         release_version=release_version,
         api_version=api_version,
-        format=format,
+        format=fmt,
     )
 
     if table is None:
@@ -124,7 +124,7 @@ def display_aux(
     ppp_version: int | None = None,
     release_version: str | None = None,
     api_version: str = API_VERSION,
-    format: str = "json",
+    fmt: str = "json",
     simplify: bool = True,
     server: str | None = None,
 ) -> pd.DataFrame | list[str]:
@@ -138,7 +138,7 @@ def display_aux(
         ppp_version: PPP base year.
         release_version: Release date in ``YYYYMMDD`` format.
         api_version: API version.
-        format: Response format.
+        fmt: Response format.
         simplify: Passed to :func:`get_aux`.
         server: Server target.
 
@@ -155,7 +155,7 @@ def display_aux(
         ppp_version=ppp_version,
         release_version=release_version,
         api_version=api_version,
-        format=format,
+        fmt=fmt,
         simplify=simplify,
         server=server,
     )
@@ -211,7 +211,7 @@ def _make_aux_getter(table_name: str, table_description: str) -> "Callable":
         ppp_version: int | None = None,
         release_version: str | None = None,
         api_version: str = API_VERSION,
-        format: str = "json",
+        fmt: str = "json",
         simplify: bool = True,
         server: str | None = None,
         dataframe_type: Literal["pandas", "polars"] = "pandas",
@@ -222,7 +222,7 @@ def _make_aux_getter(table_name: str, table_description: str) -> "Callable":
             ppp_version=ppp_version,
             release_version=release_version,
             api_version=api_version,
-            format=format,
+            fmt=fmt,
             simplify=simplify,
             server=server,
             dataframe_type=dataframe_type,
@@ -239,7 +239,7 @@ def _make_aux_getter(table_name: str, table_description: str) -> "Callable":
         ppp_version: PPP base year.
         release_version: Release date in ``YYYYMMDD`` format.
         api_version: API version.
-        format: Response format — ``"json"`` (default) or ``"csv"``.
+        fmt: Response format — ``"json"`` (default) or ``"csv"``.
         simplify: Return a DataFrame when ``True`` (default).
         server: Server target.
         dataframe_type: ``"pandas"`` (default) or ``"polars"``.

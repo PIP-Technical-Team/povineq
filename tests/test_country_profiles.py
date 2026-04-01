@@ -1,4 +1,5 @@
 """Tests for country_profiles.py — get_cp, get_cp_ki, unnest_ki."""
+# pylint: disable=redefined-outer-name  # pytest fixtures injected as parameters
 
 from __future__ import annotations
 
@@ -49,7 +50,7 @@ class TestGetCp:
     def test_default_params(self, cp_arrow_response):
         """Default ppp_version=2017, povline=2.15."""
         calls = []
-        def capture(endpoint, params, **kwargs):
+        def capture(_endpoint, params, **_kwargs):
             calls.append(params)
             return cp_arrow_response
 
@@ -62,7 +63,7 @@ class TestGetCp:
 
     def test_ppp_version_2011_no_povline_uses_1_9(self, cp_arrow_response):
         calls = []
-        def capture(endpoint, params, **kwargs):
+        def capture(_endpoint, params, **_kwargs):
             calls.append(params)
             return cp_arrow_response
 
@@ -74,7 +75,7 @@ class TestGetCp:
 
     def test_explicit_povline_not_overridden(self, cp_arrow_response):
         calls = []
-        def capture(endpoint, params, **kwargs):
+        def capture(_endpoint, params, **_kwargs):
             calls.append(params)
             return cp_arrow_response
 
@@ -88,7 +89,7 @@ class TestGetCp:
         from povineq._constants import ENDPOINT_CP_DOWNLOAD
 
         calls = []
-        def capture(endpoint, params, **kwargs):
+        def capture(endpoint, _params, **_kwargs):
             calls.append(endpoint)
             return cp_arrow_response
 
@@ -130,7 +131,7 @@ class TestGetCpKi:
         )
 
         calls = []
-        def capture(endpoint, params, **kwargs):
+        def capture(endpoint, _params, **_kwargs):
             calls.append(endpoint)
             return resp
 
@@ -188,17 +189,13 @@ class TestGetCpWithCountryList:
         return resp
 
     def test_list_joined_as_comma_separated(self, cp_resp):
-        calls = []
-        def capture(endpoint, params, **kwargs):
-            calls.append(params)
-            return cp_resp
-
-        with patch("povineq.country_profiles.build_and_execute", side_effect=capture):
+        with patch("povineq.country_profiles.build_and_execute", return_value=cp_resp) as mock_exec:
             get_cp(country=["AGO", "ALB"])
 
-        assert "," in calls[0].get("country", "")
-        assert "AGO" in calls[0]["country"]
-        assert "ALB" in calls[0]["country"]
+        params = mock_exec.call_args.args[1]
+        assert "," in params.get("country", "")
+        assert "AGO" in params["country"]
+        assert "ALB" in params["country"]
 
 
 class TestUnnestKiNestingPatterns:

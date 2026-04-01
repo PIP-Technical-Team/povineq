@@ -1,4 +1,5 @@
 """Tests for stats.py — get_stats, get_wb, get_agg using mocked HTTP."""
+# pylint: disable=redefined-outer-name  # pytest fixtures injected as parameters
 
 from __future__ import annotations
 
@@ -65,7 +66,7 @@ class TestGetStats:
     def test_popshare_disables_povline(self, arrow_stats_response):
         """When popshare is set, the request should not include povline."""
         calls = []
-        def capture_call(endpoint, params, **kwargs):
+        def capture_call(_endpoint, params, **_kwargs):
             calls.append(params)
             return arrow_stats_response
 
@@ -81,7 +82,7 @@ class TestGetStats:
         from povineq._constants import ENDPOINT_PIP_GRP
 
         calls = []
-        def capture_call(endpoint, params, **kwargs):
+        def capture_call(endpoint, _params, **_kwargs):
             calls.append(endpoint)
             return wb_json_response
 
@@ -94,7 +95,7 @@ class TestGetStats:
         from povineq._constants import ENDPOINT_PIP
 
         calls = []
-        def capture_call(endpoint, params, **kwargs):
+        def capture_call(endpoint, _params, **_kwargs):
             calls.append(endpoint)
             return arrow_stats_response
 
@@ -112,7 +113,7 @@ class TestGetStats:
 
     def test_json_format(self, json_stats_response):
         with patch("povineq.stats.build_and_execute", return_value=json_stats_response):
-            df = get_stats(format="json")
+            df = get_stats(fmt="json")
         assert isinstance(df, pd.DataFrame)
 
     def test_nowcast_filter(self):
@@ -139,7 +140,7 @@ class TestGetWb:
         from povineq._constants import ENDPOINT_PIP_GRP
 
         calls = []
-        def capture_call(endpoint, params, **kwargs):
+        def capture_call(endpoint, _params, **_kwargs):
             calls.append(endpoint)
             return wb_json_response
 
@@ -150,7 +151,7 @@ class TestGetWb:
 
     def test_group_by_wb_in_params(self, wb_json_response):
         calls = []
-        def capture_call(endpoint, params, **kwargs):
+        def capture_call(_endpoint, params, **_kwargs):
             calls.append(params)
             return wb_json_response
 
@@ -168,7 +169,7 @@ class TestGetAgg:
 
     def test_aggregate_param_passed(self, wb_json_response):
         calls = []
-        def capture_call(endpoint, params, **kwargs):
+        def capture_call(_endpoint, params, **_kwargs):
             calls.append(params)
             return wb_json_response
 
@@ -202,7 +203,7 @@ class TestGetStatsEdgeCases:
         resp = self._mock_resp(data)
         calls = []
 
-        def capture(endpoint, params, **kwargs):
+        def capture(_endpoint, params, **_kwargs):
             calls.append(params)
             return resp
 
@@ -219,7 +220,7 @@ class TestGetStatsEdgeCases:
         resp = self._mock_resp(data)
         calls = []
 
-        def capture(endpoint, params, **kwargs):
+        def capture(endpoint, _params, **_kwargs):
             calls.append(endpoint)
             return resp
 

@@ -271,7 +271,7 @@ class TestToTargetTypePolars:
 
     def test_arrow_table_to_polars(self):
         pytest.importorskip("polars")
-        import polars as pl
+        import polars as pl  # type: ignore  # pylint: disable=import-error
 
         from povineq._response import _to_target_type
 
@@ -283,7 +283,7 @@ class TestToTargetTypePolars:
 
     def test_pandas_to_polars(self):
         pytest.importorskip("polars")
-        import polars as pl
+        import polars as pl  # type: ignore  # pylint: disable=import-error
 
         from povineq._response import _to_target_type
 

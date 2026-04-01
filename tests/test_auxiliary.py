@@ -42,7 +42,7 @@ def _mock_resp(data: dict | list, status: int = 200):
 
 
 class TestGetAuxNoTable:
-    def test_no_table_returns_list(self, aux_json_bytes):
+    def test_no_table_returns_list(self):
         resp = _mock_resp({"tables": ["countries", "gdp", "cpi"]})
         with patch("povineq.auxiliary.build_and_execute", return_value=resp):
             result = get_aux()
@@ -50,7 +50,7 @@ class TestGetAuxNoTable:
         assert "countries" in result
         assert "gdp" in result
 
-    def test_no_table_simplify_false(self, aux_json_bytes):
+    def test_no_table_simplify_false(self):
         from povineq._response import PIPResponse
         resp = _mock_resp({"tables": ["countries"]})
         with patch("povineq.auxiliary.build_and_execute", return_value=resp):
@@ -136,7 +136,7 @@ class TestConvenienceWrappers:
     ])
     def test_wrapper_uses_correct_table(self, fn, table):
         calls = []
-        def capture(endpoint, params, **kwargs):
+        def capture(_endpoint, params, **_kwargs):
             calls.append(params.get("table"))
             return self._setup_mock(table)
 

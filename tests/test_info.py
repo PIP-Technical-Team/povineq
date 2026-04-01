@@ -6,7 +6,6 @@ import json
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
-import pytest
 
 from povineq.info import check_api, get_pip_info, get_versions
 
@@ -34,7 +33,7 @@ class TestCheckApi:
         from povineq._constants import ENDPOINT_HEALTH_CHECK
 
         calls = []
-        def capture(endpoint, params, **kwargs):
+        def capture(endpoint, _params, **_kwargs):
             calls.append(endpoint)
             return _mock_resp({"status": "ok"})
 
@@ -57,7 +56,7 @@ class TestGetVersions:
         from povineq._constants import ENDPOINT_VERSIONS
 
         calls = []
-        def capture(endpoint, params, **kwargs):
+        def capture(endpoint, _params, **_kwargs):
             calls.append(endpoint)
             return _mock_resp([{"version": "v1"}])
 
@@ -80,7 +79,7 @@ class TestGetPipInfo:
         from povineq._constants import ENDPOINT_PIP_INFO
 
         calls = []
-        def capture(endpoint, params, **kwargs):
+        def capture(endpoint, _params, **_kwargs):
             calls.append(endpoint)
             return _mock_resp({"info": True})
 

@@ -25,7 +25,7 @@ def get_cp(
     ppp_version: int = 2017,
     release_version: str | None = None,
     api_version: str = API_VERSION,
-    format: str = "arrow",
+    fmt: str = "arrow",
     simplify: bool = True,
     server: str | None = None,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
@@ -43,7 +43,7 @@ def get_cp(
         ppp_version: PPP base year (default 2017).
         release_version: Release date in ``YYYYMMDD`` format.
         api_version: API version.
-        format: Response format — ``"arrow"`` (default), ``"json"``,
+        fmt: Response format — ``"arrow"`` (default), ``"json"``,
             or ``"csv"``.
         simplify: If ``True`` (default), return a DataFrame.
         server: Server target — ``None``/``"prod"``, ``"qa"``, or ``"dev"``.
@@ -66,7 +66,7 @@ def get_cp(
         ppp_version=ppp_version,
         release_version=release_version,
         api_version=api_version,
-        format=format,
+        format=fmt,
     )
 
     query = params.to_query_params()

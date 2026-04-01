@@ -145,7 +145,7 @@ class TestBuildAndExecuteRetries:
         side_effects = [self._make_rate_limit_resp(), self._make_ok_resp()]
         call_count = 0
 
-        def fake_get(url, params=None, **kwargs):
+        def fake_get(_url, _params=None, **_kwargs):
             nonlocal call_count
             result = side_effects[call_count]
             call_count += 1
@@ -178,7 +178,7 @@ class TestBuildAndExecuteRetries:
         side_effects = [self._make_rate_limit_resp(wait=9999), self._make_ok_resp()]
         call_count = 0
 
-        def fake_get(*a, **kw):
+        def fake_get(*_a, **_kw):
             nonlocal call_count
             result = side_effects[min(call_count, len(side_effects) - 1)]
             call_count += 1
@@ -187,7 +187,11 @@ class TestBuildAndExecuteRetries:
         client = MagicMock()
         client.get.side_effect = fake_get
         monkeypatch.setattr("povineq._request.get_client", lambda server: client)
-        monkeypatch.setattr("povineq._request.time.sleep", lambda s: slept.append(s))
+
+        def _record_sleep(s: float) -> None:
+            slept.append(s)
+
+        monkeypatch.setattr("povineq._request.time.sleep", _record_sleep)
 
         build_and_execute("pip", {})
         assert slept[0] <= _MAX_RETRY_SECONDS

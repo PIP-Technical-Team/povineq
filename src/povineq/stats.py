@@ -27,7 +27,7 @@ def get_stats(
     ppp_version: int | None = None,
     release_version: str | None = None,
     api_version: str = API_VERSION,
-    format: str = "arrow",
+    fmt: str = "arrow",
     simplify: bool = True,
     server: str | None = None,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
@@ -57,7 +57,7 @@ def get_stats(
         ppp_version: PPP base year.
         release_version: Release date in ``YYYYMMDD`` format.
         api_version: API version (only ``"v1"`` currently).
-        format: Response format — ``"arrow"`` (default), ``"json"``, or
+        fmt: Response format — ``"arrow"`` (default), ``"json"``, or
             ``"csv"``.
         simplify: If ``True`` (default), return a DataFrame. If ``False``,
             return a :class:`~povineq._response.PIPResponse` wrapper.
@@ -106,7 +106,7 @@ def get_stats(
         ppp_version=ppp_version,
         release_version=release_version,
         api_version=api_version,
-        format=format,
+        format=fmt,
     )
 
     # Route endpoint
@@ -144,7 +144,7 @@ def get_wb(
     ppp_version: int | None = None,
     release_version: str | None = None,
     api_version: str = API_VERSION,
-    format: str = "json",
+    fmt: str = "json",
     simplify: bool = True,
     server: str | None = None,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
@@ -161,7 +161,7 @@ def get_wb(
         ppp_version: PPP base year.
         release_version: Release date in ``YYYYMMDD`` format.
         api_version: API version.
-        format: Response format — ``"json"`` (default) or ``"csv"``.
+        fmt: Response format — ``"json"`` (default) or ``"csv"``.
         simplify: If ``True`` (default), return a DataFrame.
         server: Server target.
         dataframe_type: ``"pandas"`` or ``"polars"``.
@@ -187,7 +187,7 @@ def get_wb(
         query["ppp_version"] = str(ppp_version)
     if release_version is not None:
         query["release_version"] = release_version
-    query["format"] = format
+    query["format"] = fmt
     query["group_by"] = "wb"
 
     response = build_and_execute(
@@ -204,7 +204,7 @@ def get_agg(
     release_version: str | None = None,
     aggregate: str | None = None,
     api_version: str = API_VERSION,
-    format: str = "json",
+    fmt: str = "json",
     simplify: bool = True,
     server: str | None = None,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
@@ -221,7 +221,7 @@ def get_agg(
         release_version: Release date in ``YYYYMMDD`` format.
         aggregate: Aggregate name (e.g. ``"fcv"``).
         api_version: API version.
-        format: Response format — ``"json"`` (default) or ``"csv"``.
+        fmt: Response format — ``"json"`` (default) or ``"csv"``.
         simplify: If ``True`` (default), return a DataFrame.
         server: Server target.
         dataframe_type: ``"pandas"`` or ``"polars"``.
@@ -241,7 +241,7 @@ def get_agg(
         release_version=release_version,
         aggregate=aggregate,
         api_version=api_version,
-        format=format,
+        format=fmt,
     )
 
     query = params.to_query_params()
