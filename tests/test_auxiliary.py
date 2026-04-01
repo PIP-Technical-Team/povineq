@@ -91,15 +91,14 @@ class TestGetAuxWithTable:
 
 
 class TestDisplayAux:
-    def test_prints_table_names(self, capsys):
+    def test_returns_list_of_tables(self):
         tables = ["countries", "gdp", "cpi"]
         resp = _mock_resp({"tables": tables})
         with patch("povineq.auxiliary.build_and_execute", return_value=resp):
             result = display_aux()
-        out = capsys.readouterr().out
-        assert "countries" in out
-        assert "gdp" in out
         assert isinstance(result, list)
+        assert "countries" in result
+        assert "gdp" in result
 
 
 class TestCallAux:

@@ -2,11 +2,8 @@
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from unittest.mock import patch
-
-import pytest
 
 from povineq._cache import _cache_dir, delete_cache, get_cache_info
 
@@ -27,13 +24,13 @@ class TestCacheDir:
 
 
 class TestDeleteCache:
-    def test_empty_cache_message(self, tmp_path, capsys, monkeypatch):
+    def test_empty_cache_message(self, tmp_path, monkeypatch):
         monkeypatch.setattr("povineq._cache._cache_dir", lambda: tmp_path)
+        # Should return without raising and without deleting anything.
         delete_cache()
-        captured = capsys.readouterr()
-        assert "empty" in captured.out.lower() or "nothing" in captured.out.lower()
+        assert list(tmp_path.iterdir()) == []
 
-    def test_deletes_files(self, tmp_path, monkeypatch, capsys):
+    def test_deletes_files(self, tmp_path, monkeypatch):
         # Create some dummy files
         (tmp_path / "cache1.dat").write_bytes(b"x")
         (tmp_path / "cache2.dat").write_bytes(b"y")

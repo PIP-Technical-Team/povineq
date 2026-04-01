@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import Literal
 
 import pandas as pd
@@ -136,17 +137,14 @@ def get_cp_ki(
         ENDPOINT_CP_KEY_INDICATORS, query, server=server, api_version=api_version
     )
 
-    # cp-key-indicators returns JSON only; parse raw then unnest
-    parsed = parse_response(response, simplify=False, dataframe_type=dataframe_type)
-
+    # cp-key-indicators returns JSON only.  Parse the response body once and
+    # branch: unnest_ki (simplify=True) operates on the raw dict directly;
+    # parse_response (simplify=False) wraps it in a PIPResponse.
     if simplify:
-        # The raw content is a JSON object — unnest it
-        import json
-
         raw = json.loads(response.text)
         return unnest_ki(raw)
 
-    return parsed
+    return parse_response(response, simplify=False, dataframe_type=dataframe_type)
 
 
 def unnest_ki(raw: dict | list) -> pd.DataFrame:
@@ -170,6 +168,10 @@ def unnest_ki(raw: dict | list) -> pd.DataFrame:
     """
     if isinstance(raw, list):
         raw = raw[0] if raw else {}
+
+    if not raw:
+        logger.warning("unnest_ki: received an empty response. Returning an empty DataFrame.")
+        return pd.DataFrame()
 
     def _extract(key: str) -> pd.DataFrame:
         val = raw.get(key)
@@ -205,6 +207,9 @@ def unnest_ki(raw: dict | list) -> pd.DataFrame:
             df_ref.drop_duplicates(subset=merge_cols, inplace=True)
 
     # Merge all on (country_code, reporting_year) with full outer joins
+    # Merge all sub-tables on (country_code, reporting_year) using outer joins.
+    # Start with an empty accumulator; grow it left-to-right so later tables
+    # extend rather than overwrite columns from earlier ones.
     dfs = [headcount, headcount_national, mpm_headcount, pop, gni, gdp_growth]
     result = pd.DataFrame()
     for df_part in dfs:
@@ -215,8 +220,17 @@ def unnest_ki(raw: dict | list) -> pd.DataFrame:
         else:
             common = [c for c in merge_cols if c in result.columns and c in df_part.columns]
             if common:
+                # Standard case: join on shared key columns.
                 result = result.merge(df_part, on=common, how="outer")
             else:
+                # No common key columns — a cross join would create a Cartesian
+                # product of all rows, silently inflating the output.  Warn the
+                # caller so the issue is visible in logs.
+                logger.warning(
+                    "unnest_ki: no common merge keys found when joining "
+                    f"a sub-table with columns {list(df_part.columns)}. "
+                    "Performing a cross join, which may produce spurious rows."
+                )
                 result = result.merge(df_part, how="cross")
 
     # Append shared_prosperity (merges only on country_code)

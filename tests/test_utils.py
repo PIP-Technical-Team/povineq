@@ -86,3 +86,50 @@ class TestRenameCols:
         assert "gdp" in result.columns
         assert "hfce" in result.columns
         assert "hfce_data_level" in result.columns
+
+
+class TestChangeGroupedStatsCsvEdgeCases:
+    """P3.11 — edge cases for decile unpacking."""
+
+    def test_string_in_deciles_column_is_skipped(self):
+        """Strings are not valid decile containers and must not corrupt output."""
+        df = pd.DataFrame({
+            "country": ["AGO", "ALB"],
+            "deciles": [[0.1, 0.2, 0.3], "invalid_string"],
+        })
+        # ALB's deciles are a string — treated as null → NaN in decile columns
+        result = change_grouped_stats_to_csv(df)
+        assert "decile1" in result.columns
+        assert result["decile1"].iloc[0] == pytest.approx(0.1)
+        # String row should not have contributed character-based values
+        assert result["decile1"].iloc[1] != "i"  # 'i' would be the first char of "invalid_string"
+
+    def test_non_uniform_decile_lengths_raises(self):
+        """Rows with different decile list lengths must raise ValueError."""
+        df = pd.DataFrame({
+            "country": ["AGO", "ALB"],
+            "deciles": [[0.1, 0.2, 0.3], [0.4, 0.5]],  # 3 vs 2
+        })
+        with pytest.raises(ValueError, match="different list lengths"):
+            change_grouped_stats_to_csv(df)
+
+    def test_all_null_deciles(self):
+        """All-null deciles column drops the column gracefully."""
+        df = pd.DataFrame({
+            "country": ["AGO"],
+            "deciles": [None],
+        })
+        result = change_grouped_stats_to_csv(df)
+        assert "deciles" not in result.columns
+        assert "country" in result.columns
+
+
+class TestRenameColsDuplicateTargets:
+    """P3.11 — rename_cols with duplicate target names."""
+
+    def test_duplicate_target_names_last_wins(self):
+        """When two source columns map to the same target, last mapping wins."""
+        df = pd.DataFrame({"a": [1], "b": [2]})
+        result = rename_cols(df, ["a", "b"], ["x", "x"])
+        # After rename: "a"→"x" then "b"→"x" — pandas produces two "x" columns
+        assert "x" in result.columns

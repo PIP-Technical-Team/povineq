@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-import json
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
+import httpx
 import pytest
 
-from povineq._errors import PIPAPIError, PIPRateLimitError
-from povineq._request import _extract_retry_after, _parse_api_error
+from povineq._errors import PIPAPIError, PIPConnectionError, PIPRateLimitError
+from povineq._request import _extract_retry_after, _parse_api_error, build_and_execute
 
 
 class TestExtractRetryAfter:
@@ -78,3 +78,30 @@ class TestParseApiError:
         resp = self._make_resp(500)
         err = _parse_api_error(resp)
         assert err.status_code == 500
+
+
+class TestBuildAndExecuteConnectionError:
+    """Verify that all transport-level errors are wrapped in PIPConnectionError."""
+
+    def test_connect_error_raises_pip_connection_error(self, monkeypatch):
+        def _raise_connect(*args, **kwargs):
+            raise httpx.ConnectError("Connection refused")
+
+        monkeypatch.setattr("povineq._request.get_client", lambda server: _make_mock_client(_raise_connect))
+        with pytest.raises(PIPConnectionError, match="PIP API"):
+            build_and_execute("pip", {})
+
+    def test_timeout_error_raises_pip_connection_error(self, monkeypatch):
+        def _raise_timeout(*args, **kwargs):
+            raise httpx.TimeoutException("Timed out")
+
+        monkeypatch.setattr("povineq._request.get_client", lambda server: _make_mock_client(_raise_timeout))
+        with pytest.raises(PIPConnectionError, match="PIP API"):
+            build_and_execute("pip", {})
+
+
+def _make_mock_client(side_effect):
+    """Return a minimal mock client whose .get() raises the given side_effect."""
+    client = MagicMock()
+    client.get.side_effect = side_effect
+    return client

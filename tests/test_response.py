@@ -43,15 +43,15 @@ def _make_arrow_bytes(records: list[dict]) -> bytes:
 class TestParseArrow:
     def test_basic(self):
         bs = _make_arrow_bytes([{"a": 1, "b": "x"}])
-        df = _parse_arrow(bs)
-        assert isinstance(df, pd.DataFrame)
-        assert list(df.columns) == ["a", "b"]
-        assert df["a"].iloc[0] == 1
+        table = _parse_arrow(bs)
+        assert isinstance(table, pa.Table)
+        assert table.schema.names == ["a", "b"]
+        assert table.column("a")[0].as_py() == 1
 
     def test_multiple_rows(self):
         bs = _make_arrow_bytes([{"x": i} for i in range(5)])
-        df = _parse_arrow(bs)
-        assert len(df) == 5
+        table = _parse_arrow(bs)
+        assert len(table) == 5
 
 
 class TestParseJson:
@@ -184,3 +184,72 @@ class TestPolarsSwitching:
         resp = _make_mock_response(stats_json_bytes, "application/json")
         with pytest.raises((ImportError, TypeError)):
             parse_response(resp, simplify=True, dataframe_type="polars")
+
+
+class TestToTargetType:
+    """Direct tests for _to_target_type() helper."""
+
+    def test_arrow_table_to_pandas(self):
+        from povineq._response import _to_target_type
+
+        table = pa.table({"a": [1, 2], "b": ["x", "y"]})
+        result = _to_target_type(table, "pandas")
+        assert isinstance(result, pd.DataFrame)
+        assert list(result.columns) == ["a", "b"]
+
+    def test_pandas_to_pandas_passthrough(self):
+        from povineq._response import _to_target_type
+
+        df = pd.DataFrame({"a": [1]})
+        result = _to_target_type(df, "pandas")
+        assert isinstance(result, pd.DataFrame)
+
+
+class TestApplyPostProcessing:
+    """Direct tests for _apply_post_processing() helper."""
+
+    def test_renames_columns(self):
+        from povineq._response import _apply_post_processing
+
+        df = pd.DataFrame({"reporting_year": [2000], "country_code": ["AGO"]})
+        result = _apply_post_processing(df)
+        assert "year" in result.columns
+        assert "reporting_year" not in result.columns
+
+    def test_pivots_deciles(self):
+        from povineq._response import _apply_post_processing
+
+        df = pd.DataFrame({"country_code": ["AGO"], "deciles": [[0.1, 0.2]]})
+        result = _apply_post_processing(df)
+        assert "decile1" in result.columns
+        assert "deciles" not in result.columns
+
+
+class TestEmptyResponses:
+    """Edge cases: empty Arrow, JSON, and CSV responses."""
+
+    def test_empty_json_array(self):
+        resp = _make_mock_response(b"[]", "application/json")
+        df = parse_response(resp, simplify=True)
+        assert isinstance(df, pd.DataFrame)
+        assert len(df) == 0
+
+    def test_empty_csv_header_only(self):
+        resp = _make_mock_response(b"country_code,year\n", "text/csv")
+        df = parse_response(resp, simplify=True)
+        assert isinstance(df, pd.DataFrame)
+        assert len(df) == 0
+        assert "country_code" in df.columns
+
+    def test_empty_arrow(self):
+        # Build a valid Arrow IPC file with 0 rows.
+        schema = pa.schema([("country_code", pa.string()), ("year", pa.int32())])
+        table = pa.table({"country_code": pa.array([], type=pa.string()), "year": pa.array([], type=pa.int32())})
+        buf = io.BytesIO()
+        writer = ipc.new_file(buf, schema)
+        writer.write_table(table)
+        writer.close()
+        resp = _make_mock_response(buf.getvalue(), "application/vnd.apache.arrow.file")
+        df = parse_response(resp, simplify=True)
+        assert isinstance(df, pd.DataFrame)
+        assert len(df) == 0

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Callable, Literal
 
 import pandas as pd
 from loguru import logger
@@ -108,7 +108,12 @@ def get_aux(
         else:
             raise ValueError("assign_tb must be a bool or a string.")
 
-        if isinstance(rt, pd.DataFrame):
+        if not isinstance(rt, pd.DataFrame):
+            logger.warning(
+                "assign_tb requires simplify=True to store the table in memory; "
+                "got a PIPResponse object. The table was NOT stored."
+            )
+        elif isinstance(rt, pd.DataFrame):
             return set_aux(tb_name, rt, replace=replace)
 
     return rt  # type: ignore[return-value]
@@ -156,9 +161,9 @@ def display_aux(
     )
 
     if isinstance(result, list):
-        print("Available auxiliary tables:")
+        logger.info("Available auxiliary tables:")
         for t in result:
-            print(f"  - {t}")
+            logger.info(f"  - {t}")
         return result
 
     return result  # type: ignore[return-value]
@@ -186,326 +191,125 @@ def call_aux(table: str | None = None) -> pd.DataFrame | list[str]:
     return _call_aux_store(table)
 
 
-def get_countries(
-    version: str | None = None,
-    ppp_version: int | None = None,
-    release_version: str | None = None,
-    api_version: str = API_VERSION,
-    format: str = "json",
-    simplify: bool = True,
-    server: str | None = None,
-    dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
-    """Return the auxiliary ``countries`` table.
+def _make_aux_getter(table_name: str, table_description: str) -> "Callable":
+    """Factory that generates a typed convenience wrapper around :func:`get_aux`.
+
+    Each generated function fetches a single named auxiliary table and documents
+    its parameters. Using a factory eliminates ~170 lines of boilerplate while
+    keeping individual per-table functions with proper ``__name__`` and
+    ``__doc__`` attributes for IDE autocompletion and ``help()``.
+
+    Args:
+        table_name: The auxiliary table name passed to ``get_aux(table=...)``.
+        table_description: Short description inserted into the docstring.
+
+    Returns:
+        A callable with the same signature as :func:`get_aux` (minus *table*,
+        *assign_tb*, and *replace*).
+    """
+
+    def _getter(
+        version: str | None = None,
+        ppp_version: int | None = None,
+        release_version: str | None = None,
+        api_version: str = API_VERSION,
+        format: str = "json",
+        simplify: bool = True,
+        server: str | None = None,
+        dataframe_type: Literal["pandas", "polars"] = "pandas",
+    ) -> "pd.DataFrame | PIPResponse":
+        return get_aux(
+            table=table_name,
+            version=version,
+            ppp_version=ppp_version,
+            release_version=release_version,
+            api_version=api_version,
+            format=format,
+            simplify=simplify,
+            server=server,
+            dataframe_type=dataframe_type,
+        )
+
+    _getter.__name__ = f"get_{table_name}"
+    _getter.__qualname__ = f"get_{table_name}"
+    _getter.__doc__ = f"""Return the auxiliary ``{table_name}`` table.
+
+    {table_description}
 
     Args:
         version: Data version string.
         ppp_version: PPP base year.
         release_version: Release date in ``YYYYMMDD`` format.
         api_version: API version.
-        format: Response format.
-        simplify: Return a DataFrame when ``True``.
+        format: Response format — ``"json"`` (default) or ``"csv"``.
+        simplify: Return a DataFrame when ``True`` (default).
         server: Server target.
-        dataframe_type: ``"pandas"`` or ``"polars"``.
+        dataframe_type: ``"pandas"`` (default) or ``"polars"``.
 
     Returns:
-        DataFrame of countries with ISO codes and region assignments.
+        A :class:`~pandas.DataFrame` when *simplify* is ``True``, or a
+        :class:`~povineq._response.PIPResponse` when *simplify* is ``False``.
 
     Example:
         >>> import povineq
-        >>> df = povineq.get_countries()
+        >>> df = povineq.get_{table_name}()
     """
-    return get_aux(
-        table="countries",
-        version=version, ppp_version=ppp_version, release_version=release_version,
-        api_version=api_version, format=format, simplify=simplify,
-        server=server, dataframe_type=dataframe_type,
-    )
+    return _getter
 
 
-def get_regions(
-    version: str | None = None,
-    ppp_version: int | None = None,
-    release_version: str | None = None,
-    api_version: str = API_VERSION,
-    format: str = "json",
-    simplify: bool = True,
-    server: str | None = None,
-    dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
-    """Return the auxiliary ``regions`` table.
+# ---------------------------------------------------------------------------
+# Per-table convenience getters — generated by _make_aux_getter
+# ---------------------------------------------------------------------------
 
-    Example:
-        >>> import povineq
-        >>> df = povineq.get_regions()
-    """
-    return get_aux(
-        table="regions",
-        version=version, ppp_version=ppp_version, release_version=release_version,
-        api_version=api_version, format=format, simplify=simplify,
-        server=server, dataframe_type=dataframe_type,
-    )
-
-
-def get_cpi(
-    version: str | None = None,
-    ppp_version: int | None = None,
-    release_version: str | None = None,
-    api_version: str = API_VERSION,
-    format: str = "json",
-    simplify: bool = True,
-    server: str | None = None,
-    dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
-    """Return the auxiliary ``cpi`` table.
-
-    Example:
-        >>> import povineq
-        >>> df = povineq.get_cpi()
-    """
-    return get_aux(
-        table="cpi",
-        version=version, ppp_version=ppp_version, release_version=release_version,
-        api_version=api_version, format=format, simplify=simplify,
-        server=server, dataframe_type=dataframe_type,
-    )
-
-
-def get_dictionary(
-    version: str | None = None,
-    ppp_version: int | None = None,
-    release_version: str | None = None,
-    api_version: str = API_VERSION,
-    format: str = "json",
-    simplify: bool = True,
-    server: str | None = None,
-    dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
-    """Return the auxiliary ``dictionary`` table.
-
-    Example:
-        >>> import povineq
-        >>> df = povineq.get_dictionary()
-    """
-    return get_aux(
-        table="dictionary",
-        version=version, ppp_version=ppp_version, release_version=release_version,
-        api_version=api_version, format=format, simplify=simplify,
-        server=server, dataframe_type=dataframe_type,
-    )
-
-
-def get_gdp(
-    version: str | None = None,
-    ppp_version: int | None = None,
-    release_version: str | None = None,
-    api_version: str = API_VERSION,
-    format: str = "json",
-    simplify: bool = True,
-    server: str | None = None,
-    dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
-    """Return the auxiliary ``gdp`` table.
-
-    Example:
-        >>> import povineq
-        >>> df = povineq.get_gdp()
-    """
-    return get_aux(
-        table="gdp",
-        version=version, ppp_version=ppp_version, release_version=release_version,
-        api_version=api_version, format=format, simplify=simplify,
-        server=server, dataframe_type=dataframe_type,
-    )
-
-
-def get_incgrp_coverage(
-    version: str | None = None,
-    ppp_version: int | None = None,
-    release_version: str | None = None,
-    api_version: str = API_VERSION,
-    format: str = "json",
-    simplify: bool = True,
-    server: str | None = None,
-    dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
-    """Return the auxiliary ``incgrp_coverage`` table.
-
-    Example:
-        >>> import povineq
-        >>> df = povineq.get_incgrp_coverage()
-    """
-    return get_aux(
-        table="incgrp_coverage",
-        version=version, ppp_version=ppp_version, release_version=release_version,
-        api_version=api_version, format=format, simplify=simplify,
-        server=server, dataframe_type=dataframe_type,
-    )
-
-
-def get_interpolated_means(
-    version: str | None = None,
-    ppp_version: int | None = None,
-    release_version: str | None = None,
-    api_version: str = API_VERSION,
-    format: str = "json",
-    simplify: bool = True,
-    server: str | None = None,
-    dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
-    """Return the auxiliary ``interpolated_means`` table.
-
-    Example:
-        >>> import povineq
-        >>> df = povineq.get_interpolated_means()
-    """
-    return get_aux(
-        table="interpolated_means",
-        version=version, ppp_version=ppp_version, release_version=release_version,
-        api_version=api_version, format=format, simplify=simplify,
-        server=server, dataframe_type=dataframe_type,
-    )
-
-
-def get_hfce(
-    version: str | None = None,
-    ppp_version: int | None = None,
-    release_version: str | None = None,
-    api_version: str = API_VERSION,
-    format: str = "json",
-    simplify: bool = True,
-    server: str | None = None,
-    dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
-    """Return the auxiliary ``pce`` (household final consumption expenditure) table.
-
-    Example:
-        >>> import povineq
-        >>> df = povineq.get_hfce()
-    """
-    return get_aux(
-        table="pce",
-        version=version, ppp_version=ppp_version, release_version=release_version,
-        api_version=api_version, format=format, simplify=simplify,
-        server=server, dataframe_type=dataframe_type,
-    )
-
-
-def get_pop(
-    version: str | None = None,
-    ppp_version: int | None = None,
-    release_version: str | None = None,
-    api_version: str = API_VERSION,
-    format: str = "json",
-    simplify: bool = True,
-    server: str | None = None,
-    dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
-    """Return the auxiliary ``pop`` (population) table.
-
-    Example:
-        >>> import povineq
-        >>> df = povineq.get_pop()
-    """
-    return get_aux(
-        table="pop",
-        version=version, ppp_version=ppp_version, release_version=release_version,
-        api_version=api_version, format=format, simplify=simplify,
-        server=server, dataframe_type=dataframe_type,
-    )
-
-
-def get_pop_region(
-    version: str | None = None,
-    ppp_version: int | None = None,
-    release_version: str | None = None,
-    api_version: str = API_VERSION,
-    format: str = "json",
-    simplify: bool = True,
-    server: str | None = None,
-    dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
-    """Return the auxiliary ``pop_region`` table.
-
-    Example:
-        >>> import povineq
-        >>> df = povineq.get_pop_region()
-    """
-    return get_aux(
-        table="pop_region",
-        version=version, ppp_version=ppp_version, release_version=release_version,
-        api_version=api_version, format=format, simplify=simplify,
-        server=server, dataframe_type=dataframe_type,
-    )
-
-
-def get_ppp(
-    version: str | None = None,
-    ppp_version: int | None = None,
-    release_version: str | None = None,
-    api_version: str = API_VERSION,
-    format: str = "json",
-    simplify: bool = True,
-    server: str | None = None,
-    dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
-    """Return the auxiliary ``ppp`` table.
-
-    Example:
-        >>> import povineq
-        >>> df = povineq.get_ppp()
-    """
-    return get_aux(
-        table="ppp",
-        version=version, ppp_version=ppp_version, release_version=release_version,
-        api_version=api_version, format=format, simplify=simplify,
-        server=server, dataframe_type=dataframe_type,
-    )
-
-
-def get_region_coverage(
-    version: str | None = None,
-    ppp_version: int | None = None,
-    release_version: str | None = None,
-    api_version: str = API_VERSION,
-    format: str = "json",
-    simplify: bool = True,
-    server: str | None = None,
-    dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
-    """Return the auxiliary ``region_coverage`` table.
-
-    Example:
-        >>> import povineq
-        >>> df = povineq.get_region_coverage()
-    """
-    return get_aux(
-        table="region_coverage",
-        version=version, ppp_version=ppp_version, release_version=release_version,
-        api_version=api_version, format=format, simplify=simplify,
-        server=server, dataframe_type=dataframe_type,
-    )
-
-
-def get_survey_means(
-    version: str | None = None,
-    ppp_version: int | None = None,
-    release_version: str | None = None,
-    api_version: str = API_VERSION,
-    format: str = "json",
-    simplify: bool = True,
-    server: str | None = None,
-    dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
-    """Return the auxiliary ``survey_means`` table.
-
-    Example:
-        >>> import povineq
-        >>> df = povineq.get_survey_means()
-    """
-    return get_aux(
-        table="survey_means",
-        version=version, ppp_version=ppp_version, release_version=release_version,
-        api_version=api_version, format=format, simplify=simplify,
-        server=server, dataframe_type=dataframe_type,
-    )
+get_countries = _make_aux_getter(
+    "countries",
+    "Contains ISO3 country codes, country names, and World Bank region assignments.",
+)
+get_regions = _make_aux_getter(
+    "regions",
+    "Contains World Bank region codes and names.",
+)
+get_cpi = _make_aux_getter(
+    "cpi",
+    "Consumer Price Index data used to deflate welfare aggregates.",
+)
+get_dictionary = _make_aux_getter(
+    "dictionary",
+    "Data dictionary describing all variables returned by the PIP API.",
+)
+get_gdp = _make_aux_getter(
+    "gdp",
+    "GDP per capita series used in the PIP pipeline.",
+)
+get_incgrp_coverage = _make_aux_getter(
+    "incgrp_coverage",
+    "Survey coverage by income group.",
+)
+get_interpolated_means = _make_aux_getter(
+    "interpolated_means",
+    "Interpolated/extrapolated mean welfare values used for gap-filling.",
+)
+get_hfce = _make_aux_getter(
+    "pce",
+    "Household Final Consumption Expenditure (PCE/HFCE) series.",
+)
+get_pop = _make_aux_getter(
+    "pop",
+    "Population data by country and year.",
+)
+get_pop_region = _make_aux_getter(
+    "pop_region",
+    "Population data aggregated by World Bank region.",
+)
+get_ppp = _make_aux_getter(
+    "ppp",
+    "Purchasing Power Parity conversion factors.",
+)
+get_region_coverage = _make_aux_getter(
+    "region_coverage",
+    "Survey coverage by World Bank region.",
+)
+get_survey_means = _make_aux_getter(
+    "survey_means",
+    "Survey mean welfare values before interpolation.",
+)

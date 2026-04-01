@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import time
 
@@ -36,8 +37,8 @@ def _extract_retry_after(response: httpx.Response) -> float:
         match = re.search(r"Try again in (\d+(?:\.\d+)?)", message)
         if match:
             return float(match.group(1))
-    except Exception:
-        pass
+    except (ValueError, AttributeError, TypeError, KeyError):
+        logger.debug("Could not parse retry-after body; falling back to default wait.")
     return 0.0
 
 
@@ -83,7 +84,7 @@ def _parse_api_error(response: httpx.Response) -> PIPAPIError:
                 details_msg = details[0].get("msg", [""])[0] if details[0].get("msg") else ""
 
         return PIPAPIError(status, error_msg, details_msg, valid_values)
-    except Exception:
+    except (ValueError, json.JSONDecodeError, KeyError, AttributeError, TypeError):
         return PIPAPIError(status, error_message=response.reason_phrase)
 
 
@@ -95,6 +96,11 @@ def build_and_execute(
 ) -> httpx.Response:
     """Build a URL, execute a GET request, and handle rate-limit retries.
 
+    Creates the full API URL from *endpoint* and *api_version*, then enters a
+    retry loop of up to ``_MAX_RATE_RETRIES`` attempts. On a 429 response the
+    loop sleeps for the number of seconds indicated in the response body (capped
+    at ``_MAX_RETRY_SECONDS``) before the next attempt.
+
     Args:
         endpoint: PIP API endpoint path segment (e.g. ``"pip"``).
         params: Query-string parameters as a flat string dict.
@@ -105,18 +111,22 @@ def build_and_execute(
         The successful :class:`httpx.Response`.
 
     Raises:
-        PIPRateLimitError: When rate limit is exceeded and retries are exhausted.
-        PIPAPIError: When the API returns a 4xx or 5xx error other than 429.
-        PIPConnectionError: When the network is unreachable.
+        PIPRateLimitError: When rate limit is exceeded and all retries are
+            exhausted. The exception carries the recommended wait time.
+        PIPAPIError: When the API returns a 4xx or 5xx error other than 429,
+            including structured JSON error messages from the PIP API.
+        PIPConnectionError: When the network is unreachable or a transport-level
+            error occurs (timeout, DNS failure, TLS error, etc.).
     """
     url = f"/{api_version}/{endpoint}"
 
+    # Create the client once outside the retry loop to reuse the connection pool.
+    client = get_client(server)
     for attempt in range(_MAX_RATE_RETRIES + 1):
         try:
-            client = get_client(server)
             logger.debug(f"GET {url} params={params}")
             response = client.get(url, params=params)
-        except httpx.ConnectError as exc:
+        except httpx.RequestError as exc:
             raise PIPConnectionError(
                 "Cannot reach the PIP API. Check your internet connection."
             ) from exc

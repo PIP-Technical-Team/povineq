@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "povineq"
@@ -48,8 +48,8 @@ Documentation = "https://pip-technical-team.github.io/povineq/"
 Repository = "https://github.com/PIP-Technical-Team/povineq"
 Issues = "https://github.com/PIP-Technical-Team/povineq/issues"
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.hatch.build.targets.wheel]
+packages = ["src/povineq"]
 
 [tool.ruff]
 line-length = 100

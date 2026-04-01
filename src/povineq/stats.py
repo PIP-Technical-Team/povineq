@@ -171,11 +171,6 @@ def get_wb(
         >>> import povineq
         >>> df = povineq.get_wb()
     """
-    from povineq._validation import _BaseParams
-
-    class _WbParams(_BaseParams):
-        pass
-
     query: dict[str, str] = {}
     if year != "all":
         query["year"] = ",".join(str(y) for y in year) if isinstance(year, list) else str(year)

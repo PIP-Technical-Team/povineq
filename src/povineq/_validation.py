@@ -66,8 +66,8 @@ class StatsParams(_BaseParams):
     year: str | int | list[int] = DEFAULT_YEAR
     povline: float | None = None
     popshare: float | None = None
-    fill_gaps: bool = False
-    nowcast: bool = False
+    fill_gaps: bool | None = False
+    nowcast: bool | None = False
     subgroup: str | None = None
     welfare_type: Literal["all", "income", "consumption"] = "all"
     reporting_level: Literal["all", "national", "urban", "rural"] = "all"
@@ -93,8 +93,8 @@ class StatsParams(_BaseParams):
 
         # subgroup is incompatible with fill_gaps/nowcast
         if self.subgroup is not None:
-            self.fill_gaps = None  # type: ignore[assignment]
-            self.nowcast = None  # type: ignore[assignment]
+            self.fill_gaps = None
+            self.nowcast = None
 
         return self
 

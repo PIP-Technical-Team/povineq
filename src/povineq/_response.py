@@ -11,6 +11,7 @@ import httpx
 import pandas as pd
 import pyarrow as pa
 import pyarrow.ipc as ipc
+from loguru import logger
 
 from povineq._constants import COLUMN_RENAMES
 from povineq._errors import PIPError
@@ -41,18 +42,21 @@ class PIPResponse:
     response: httpx.Response
 
 
-def _parse_arrow(content: bytes) -> pd.DataFrame:
+def _parse_arrow(content: bytes) -> pa.Table:
     """Parse an Apache Arrow IPC (Feather v2) response body.
+
+    Returns the raw :class:`~pyarrow.Table` so the caller can choose between
+    zero-copy conversion to polars (``pl.from_arrow``) or a pandas conversion,
+    avoiding a double pass through numpy when polars is the target type.
 
     Args:
         content: Raw bytes from the HTTP response.
 
     Returns:
-        Parsed :class:`~pandas.DataFrame`.
+        Parsed :class:`~pyarrow.Table`.
     """
     reader = ipc.open_file(io.BytesIO(content))
-    table: pa.Table = reader.read_all()
-    return table.to_pandas()
+    return reader.read_all()
 
 
 def _parse_json(text: str, is_raw: bool = False) -> pd.DataFrame | dict | list:
@@ -80,7 +84,8 @@ def _parse_json(text: str, is_raw: bool = False) -> pd.DataFrame | dict | list:
         # Flat dict → single-row DataFrame; nested → json_normalize
         try:
             return pd.json_normalize(data)
-        except Exception:
+        except (ValueError, AttributeError, TypeError):
+            logger.warning("json_normalize failed; falling back to single-row DataFrame.")
             return pd.DataFrame([data])
 
     return pd.DataFrame([{"value": data}])
@@ -113,13 +118,18 @@ def _apply_post_processing(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _to_target_type(
-    df: pd.DataFrame,
+    data: pa.Table | pd.DataFrame,
     dataframe_type: Literal["pandas", "polars"],
 ) -> pd.DataFrame:
-    """Convert DataFrame to the requested type.
+    """Convert data to the requested DataFrame type.
+
+    Accepts either a :class:`~pyarrow.Table` (for zero-copy polars conversion)
+    or a :class:`~pandas.DataFrame`. When *dataframe_type* is ``"polars"`` and
+    the input is already an Arrow Table, ``pl.from_arrow()`` is used directly —
+    no intermediate numpy pass required.
 
     Args:
-        df: Input pandas DataFrame.
+        data: Input Arrow Table or pandas DataFrame.
         dataframe_type: ``"pandas"`` (default) or ``"polars"``.
 
     Returns:
@@ -132,12 +142,16 @@ def _to_target_type(
         try:
             import polars as pl
 
-            return pl.from_pandas(df)
+            if isinstance(data, pa.Table):
+                return pl.from_arrow(data)  # zero-copy path
+            return pl.from_pandas(data)
         except ImportError as exc:
             raise ImportError(
                 "polars is not installed. Run: pip install povineq[polars]"
             ) from exc
-    return df
+    if isinstance(data, pa.Table):
+        return data.to_pandas()
+    return data
 
 
 def parse_response(
@@ -170,13 +184,19 @@ def parse_response(
     content_type = response.headers.get("content-type", "")
 
     if "application/vnd.apache.arrow.file" in content_type:
-        parsed: pd.DataFrame | dict | list = _parse_arrow(response.content)
-        # Arrow responses do not need decile pivoting (see pipr comment)
-        if simplify and not is_raw and isinstance(parsed, pd.DataFrame):
+        table: pa.Table = _parse_arrow(response.content)
+        # Arrow responses do not need decile pivoting (see pipr comment).
+        # Rename columns directly on the Arrow Table (zero-copy) before
+        # converting to the target type, avoiding a double numpy pass.
+        if simplify and not is_raw:
+            renamed_names = [COLUMN_RENAMES.get(name, name) for name in table.schema.names]
+            table = table.rename_columns(renamed_names)
+            return _to_target_type(table, dataframe_type)
+        parsed: pd.DataFrame | dict | list = table.to_pandas()
+        if isinstance(parsed, pd.DataFrame):
             parsed = rename_cols(
                 parsed, list(COLUMN_RENAMES.keys()), list(COLUMN_RENAMES.values())
             )
-            return _to_target_type(parsed, dataframe_type)
 
     elif "application/json" in content_type:
         parsed = _parse_json(response.text, is_raw=is_raw)

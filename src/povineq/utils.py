@@ -39,30 +39,34 @@ def change_grouped_stats_to_csv(df: pd.DataFrame) -> pd.DataFrame:
 
     deciles_series = df["deciles"]
 
-    # Determine the number of deciles from the first non-null row
-    n_deciles = 0
-    for val in deciles_series:
-        if val is not None and hasattr(val, "__len__"):
-            n_deciles = len(val)
-            break
+    # Only list/tuple cells are valid decile containers; strings would silently
+    # corrupt output (each character would become a "decile value").
+    valid_mask = deciles_series.apply(lambda v: isinstance(v, (list, tuple)))
+    valid_lengths = deciles_series[valid_mask].apply(len)
 
-    if n_deciles == 0:
+    if valid_lengths.empty:
         return df.drop(columns=["deciles"])
 
-    decile_cols = {f"decile{i + 1}": [] for i in range(n_deciles)}
-    for val in deciles_series:
-        if val is None or not hasattr(val, "__len__"):
-            for i in range(n_deciles):
-                decile_cols[f"decile{i + 1}"].append(None)
-        else:
-            for i in range(n_deciles):
-                decile_cols[f"decile{i + 1}"].append(val[i] if i < len(val) else None)
+    # Guard against rows with different decile counts — that would produce
+    # ragged output with silent None-padding.
+    if valid_lengths.nunique() != 1:
+        raise ValueError(
+            "Rows in the 'deciles' column have different list lengths "
+            f"({sorted(valid_lengths.unique().tolist())}). Cannot pivot to columns."
+        )
 
-    result = df.drop(columns=["deciles"]).copy()
-    for col_name, values in decile_cols.items():
-        result[col_name] = values
+    n_deciles = int(valid_lengths.iloc[0])
 
-    return result
+    # Vectorised unpacking: each list cell becomes a row in a new DataFrame.
+    decile_data = pd.DataFrame(
+        deciles_series.where(valid_mask).apply(
+            lambda v: list(v) if isinstance(v, (list, tuple)) else [None] * n_deciles
+        ).tolist(),
+        index=df.index,
+    ).rename(columns=lambda i: f"decile{i + 1}")
+
+    result = df.drop(columns=["deciles"])
+    return pd.concat([result, decile_data], axis=1)
 
 
 def rename_cols(df: pd.DataFrame, oldnames: list[str], newnames: list[str]) -> pd.DataFrame:

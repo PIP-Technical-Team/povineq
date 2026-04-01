@@ -2,25 +2,13 @@
 
 from __future__ import annotations
 
-import io
 import json
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
-import pyarrow as pa
-import pyarrow.ipc as ipc
 import pytest
 
 from povineq.stats import get_agg, get_stats, get_wb
-
-
-def _make_arrow_bytes(records: list[dict]) -> bytes:
-    table = pa.Table.from_pydict({k: [r[k] for r in records] for k in records[0]})
-    buf = io.BytesIO()
-    writer = ipc.new_file(buf, table.schema)
-    writer.write_table(table)
-    writer.close()
-    return buf.getvalue()
 
 
 def _mock_response(content: bytes, content_type: str, status: int = 200) -> MagicMock:
@@ -35,19 +23,9 @@ def _mock_response(content: bytes, content_type: str, status: int = 200) -> Magi
 
 
 @pytest.fixture()
-def arrow_stats_response():
-    records = [
-        {
-            "country_code": "AGO",
-            "reporting_year": 2000,
-            "reporting_level": "national",
-            "welfare_type": "consumption",
-            "headcount": 0.544,
-            "poverty_gap": 0.218,
-            "estimate_type": "survey",
-        }
-    ]
-    return _mock_response(_make_arrow_bytes(records), "application/vnd.apache.arrow.file")
+def arrow_stats_response(stats_arrow_bytes):
+    """Build a mock Arrow response using the shared conftest fixture."""
+    return _mock_response(stats_arrow_bytes, "application/vnd.apache.arrow.file")
 
 
 @pytest.fixture()

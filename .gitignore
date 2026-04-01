@@ -8,6 +8,9 @@
 # Compound GPID local config (user-specific, never commit)
 compound-gpid.local.md
 
+# Compound GPID knowledge artifacts (generated, not part of the package)
+.cg-docs/
+
 # Python build artefacts
 __pycache__/
 *.py[cod]

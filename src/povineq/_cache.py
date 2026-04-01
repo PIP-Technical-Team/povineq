@@ -2,14 +2,20 @@
 
 from __future__ import annotations
 
+import functools
 import shutil
 from pathlib import Path
 
+from loguru import logger
 from platformdirs import user_cache_dir
 
 
+@functools.lru_cache(maxsize=1)
 def _cache_dir() -> Path:
     """Return the platform-appropriate cache directory for povineq.
+
+    The result is cached after the first call so that subsequent requests
+    do not issue redundant ``mkdir`` syscalls.
 
     Returns:
         :class:`~pathlib.Path` pointing to the cache directory.
@@ -33,12 +39,15 @@ def delete_cache() -> None:
     cache_path = _cache_dir()
     cached = list(cache_path.iterdir())
     if not cached:
-        print("Cache is empty. Nothing to delete.")
+        logger.info("Cache is empty. Nothing to delete.")
         return
 
     shutil.rmtree(cache_path)
+    # Reset the lru_cache so the next call recreates the directory entry.
+    if hasattr(_cache_dir, "cache_clear"):
+        _cache_dir.cache_clear()
     cache_path.mkdir(parents=True, exist_ok=True)
-    print(f"All {len(cached)} cached item(s) have been deleted.")
+    logger.info(f"All {len(cached)} cached item(s) have been deleted.")
 
 
 def get_cache_info() -> dict[str, object]:

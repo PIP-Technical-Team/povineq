@@ -60,7 +60,12 @@ from povineq.info import check_api, get_pip_info, get_versions
 from povineq.stats import get_agg, get_stats, get_wb
 from povineq.utils import change_grouped_stats_to_csv
 
-__version__ = "0.1.0"
+try:
+    from importlib.metadata import version
+
+    __version__ = version("povineq")
+except Exception:
+    __version__ = "0.1.0"  # fallback when package is not installed (e.g. editable source)
 
 __all__ = [  # noqa: RUF022
     # Version

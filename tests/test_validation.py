@@ -193,3 +193,36 @@ class TestAggParams:
         p = AggParams(aggregate="fcv")
         q = p.to_query_params()
         assert q["aggregate"] == "fcv"
+
+
+# ---------------------------------------------------------------------------
+# P2.18 — boundary value and edge-case tests
+# ---------------------------------------------------------------------------
+
+class TestStatsParamsBoundary:
+
+    @pytest.mark.parametrize("subgroup", ["WB_REGIONS", "Wb_Regions", "wb_region"])
+    def test_invalid_subgroup_case_variants(self, subgroup):
+        """Only exact lowercase 'wb_regions' or 'none' are valid."""
+        with pytest.raises(ValidationError):
+            StatsParams(subgroup=subgroup)
+
+    def test_subgroup_with_povline_clears_fill_gaps(self):
+        """subgroup should clear fill_gaps and nowcast regardless of other params."""
+        p = StatsParams(subgroup="wb_regions", povline=2.15, fill_gaps=True)
+        assert p.fill_gaps is None
+        assert p.nowcast is None
+
+    def test_year_list_with_duplicates_preserved(self):
+        """Year duplicates are not deduped — user is responsible."""
+        p = StatsParams(year=[2000, 2000, 2001])
+        q = p.to_query_params()
+        assert q["year"] == "2000,2000,2001"
+
+    def test_format_csv_valid(self):
+        p = StatsParams(format="csv")
+        assert p.format == "csv"
+
+    def test_api_version_only_v1_allowed(self):
+        with pytest.raises(ValidationError):
+            StatsParams(api_version="v2")
