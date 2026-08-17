@@ -3,7 +3,7 @@
   "milestones": [
     {
       "id": "v1-full-pipr-parity",
-      "title": "v1.0 — Full pipr parity",
+      "title": "Full pipr parity",
       "objective": "Implement a Python PIP API wrapper with full parity to the pipr R package (excluding get_gd) and publish to PyPI.",
       "status": "done",
       "features": [
