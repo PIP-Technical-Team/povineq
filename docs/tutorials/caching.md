@@ -22,7 +22,7 @@ The current request layer does not write response files to this directory.
 
 ## Inspecting the Cache
 
-Use `get_cache_info()` to see how many files are cached and how much disk space
+Use `get_cache_info()` to see how many files are in the cache directory and how much disk space
 they use:
 
 ```python

@@ -1,0 +1,853 @@
+{
+  "edge_count": 5,
+  "edges": [
+    {
+      "edge_type": "decided_from",
+      "source": ".cg-docs/plans/2026-03-31-povineq-v1-full-implementation.md",
+      "target": ".cg-docs/brainstorms/2026-03-31-povineq-architecture-and-stack.md",
+      "target_missing": false
+    },
+    {
+      "edge_type": "decided_from",
+      "source": ".cg-docs/plans/2026-04-01-documentation-website.md",
+      "target": ".cg-docs/brainstorms/2026-04-01-documentation-website.md",
+      "target_missing": false
+    },
+    {
+      "edge_type": "decided_from",
+      "source": ".cg-docs/plans/2026-08-17-pypi-publication-release-readiness.md",
+      "target": ".cg-docs/brainstorms/2026-03-31-povineq-architecture-and-stack.md",
+      "target_missing": false
+    },
+    {
+      "edge_type": "decided_from",
+      "source": ".cg-docs/plans/2026-08-17-pypi-publication.md",
+      "target": ".cg-docs/brainstorms/2026-03-31-povineq-architecture-and-stack.md",
+      "target_missing": false
+    },
+    {
+      "edge_type": "references",
+      "source": ".cg-docs/brainstorms/2026-04-01-documentation-website.md",
+      "target": ".cg-docs/plans/2026-04-01-documentation-website.md",
+      "target_missing": false
+    }
+  ],
+  "entities": [
+    {
+      "date": "2026-03-31",
+      "entity_type": "brainstorm",
+      "path": ".cg-docs/brainstorms/2026-03-31-povineq-architecture-and-stack.md",
+      "slug": "2026-03-31-povineq-architecture-and-stack",
+      "status": "decided",
+      "summary": "The team needs to build `povineq`, a Python wrapper for the PIP API that replicates the functionality of the `pipr` R package. The package must be efficient, robust, well-tested, and published to PyPI for external users.",
+      "tags": [
+        "architecture",
+        "python",
+        "api-client",
+        "pip-api",
+        "package-design"
+      ],
+      "title": "povineq Python package — architecture and stack decisions",
+      "top_keywords": [
+        "httpx",
+        "requests",
+        "hishel",
+        "stack",
+        "pydantic",
+        "pipr",
+        "requests-cache",
+        "approach",
+        "attrs",
+        "povineq"
+      ]
+    },
+    {
+      "date": "2026-04-01",
+      "entity_type": "brainstorm",
+      "path": ".cg-docs/brainstorms/2026-04-01-documentation-website.md",
+      "slug": "2026-04-01-documentation-website",
+      "status": "decided",
+      "summary": "The `povineq` package needs a documentation website similar to what `pkgdown` provides for R packages (e.g., [pipr](https://worldbank.github.io/pipr)). The project already declares a documentation URL at `https://pip-technical-team.github.io/povineq/` in `pyproject.toml` but has no docs site yet.",
+      "tags": [
+        "documentation",
+        "website",
+        "mkdocs",
+        "api-reference",
+        "tutorials"
+      ],
+      "title": "Documentation website for povineq",
+      "top_keywords": [
+        "povineq",
+        "mkdocs.yml",
+        "approach",
+        "quartodoc",
+        "documentation",
+        "website",
+        "mkdocstrings-python",
+        "mkdocs-jupyter",
+        "pyproject.toml",
+        "pip-technical-team.github.io/povineq/"
+      ]
+    },
+    {
+      "date": "2026-03-31",
+      "entity_type": "plan",
+      "path": ".cg-docs/plans/2026-03-31-povineq-v1-full-implementation.md",
+      "slug": "2026-03-31-povineq-v1-full-implementation",
+      "status": "active",
+      "summary": "Build a complete Python package (`povineq`) that wraps the World Bank PIP API with full feature parity to the `pipr` R package (excluding `get_gd()`, deferred to v2.0). The package uses `httpx` + `pydantic` + `hishel` + `pyarrow`, returns pandas DataFrames by default (polars optional), is published to PyPI, and is thoroughly tested.",
+      "tags": [
+        "python",
+        "package",
+        "api-client",
+        "pip-api",
+        "v1.0",
+        "full-implementation"
+      ],
+      "title": "povineq v1.0 — Full implementation plan",
+      "top_keywords": [
+        "pipr",
+        "functions",
+        "povineq",
+        "test",
+        "auxiliary",
+        "_client.py",
+        "_request.py",
+        "info.py",
+        "utils.py",
+        "__init__.py"
+      ]
+    },
+    {
+      "date": "2026-04-01",
+      "entity_type": "plan",
+      "path": ".cg-docs/plans/2026-04-01-documentation-website.md",
+      "slug": "2026-04-01-documentation-website",
+      "status": "active",
+      "summary": "Build and deploy a documentation website for `povineq` at `pip-technical-team.github.io/povineq/` using MkDocs + Material for MkDocs + mkdocstrings. The site will serve as the primary documentation entry point for Python users who want to query the World Bank PIP API, providing auto-generated API reference pages plus hand-written tutorials.",
+      "tags": [
+        "documentation",
+        "mkdocs",
+        "api-reference",
+        "tutorials",
+        "github-pages"
+      ],
+      "title": "Documentation website with MkDocs + Material",
+      "top_keywords": [
+        "index.md",
+        "uv run mkdocs build --strict",
+        "mkdocs",
+        "documentation",
+        "mkdocs.yml",
+        "mkdocs-gen-files",
+        "pyproject.toml",
+        "getting-started.md",
+        "world bank",
+        "getting started"
+      ]
+    },
+    {
+      "date": "2026-08-17",
+      "entity_type": "plan",
+      "path": ".cg-docs/plans/2026-08-17-pypi-publication-release-readiness.md",
+      "slug": "2026-08-17-pypi-publication-release-readiness",
+      "status": "active",
+      "summary": "Publish the first stable `povineq` distribution to PyPI through a repeatable, credential-safe release process. The package must pass quality gates, install from its built artifacts, and publish only an exact version-tagged distribution through GitHub OIDC trusted publishing.",
+      "tags": [
+        "python",
+        "packaging",
+        "pypi",
+        "release",
+        "ci-cd",
+        "testing",
+        "uv"
+      ],
+      "title": "Publish povineq to PyPI with release-readiness gates",
+      "top_keywords": [
+        "pyproject.toml",
+        "polars",
+        "uv_index",
+        "uv.lock",
+        "test scenarios",
+        "release",
+        "povineq",
+        "pypi",
+        "0.1.0",
+        "twine check"
+      ]
+    },
+    {
+      "date": "2026-08-17",
+      "entity_type": "plan",
+      "path": ".cg-docs/plans/2026-08-17-pypi-publication.md",
+      "slug": "2026-08-17-pypi-publication",
+      "status": "active",
+      "summary": "Publish the first stable `povineq` distribution to PyPI using a repeatable, secure release process. The release must be independently buildable, pass all quality gates, install correctly from its built artifacts, and provide accurate public installation and release documentation.",
+      "tags": [
+        "python",
+        "packaging",
+        "pypi",
+        "release",
+        "ci-cd",
+        "testing"
+      ],
+      "title": "Publish povineq to PyPI",
+      "top_keywords": [
+        "pyproject.toml",
+        "polars",
+        "povineq",
+        "test scenarios",
+        "readme.md",
+        "release",
+        "pypi",
+        ".github/workflows/ci.yml",
+        "uv.lock",
+        "uv build"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "review",
+      "path": ".cg-docs/reviews/2026-03-31-povineq-v1-full-implementation-review.md",
+      "slug": "2026-03-31-povineq-v1-full-implementation-review",
+      "status": "",
+      "summary": "**Review depth**: thorough **Files reviewed**: 34 **Findings**: 2 P1 · 25 P2 · 12 P3 **Date**: 2026-04-01 **Agents**: cg-code-quality · cg-testing · cg-documentation · cg-version-control · cg-reproducibility · cg-performance · cg-architecture · cg-data-quality · cg-learnings-researcher",
+      "tags": [],
+      "title": "2026-03-31-povineq-v1-full-implementation-review",
+      "top_keywords": [
+        "pipconnectionerror",
+        "__init__.py",
+        "country_profiles.py",
+        "conftest.py",
+        "auxiliary.py",
+        "_request.py",
+        "get_wb()",
+        ".gitignore",
+        ".cg-docs/",
+        "unnest_ki()"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "review",
+      "path": ".cg-docs/reviews/2026-04-01-documentation-website-light-review.md",
+      "slug": "2026-04-01-documentation-website-light-review",
+      "status": "",
+      "summary": "**Review depth**: light **Files reviewed**: 7 (`.github/workflows/ci.yml`, `.github/workflows/docs.yml`, `.gitignore`, `pyproject.toml`, `roadmap.json`, `mkdocs.yml`, `docs/`) **Findings**: 0 P1 · 5 P2 · 3 P3",
+      "tags": [],
+      "title": "2026-04-01-documentation-website-light-review",
+      "top_keywords": [
+        "docs.yml",
+        "gen_ref_pages.py",
+        ".gitignore",
+        "pyproject.toml",
+        "mkdocs.yml",
+        "--force",
+        "docs/reference/",
+        "ci.yml",
+        "fix",
+        ".github/workflows/docs.yml"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "review",
+      "path": ".cg-docs/reviews/2026-04-01-documentation-website-review.md",
+      "slug": "2026-04-01-documentation-website-review",
+      "status": "",
+      "summary": "**Review depth**: thorough **Files reviewed**: 8 (`.gitignore`, `pyproject.toml`, `roadmap.json`, `uv.lock`, `.github/workflows/docs.yml`, `docs/**`, `mkdocs.yml`, `docs/gen_ref_pages.py`) **Findings**: 0 P1 · 12 P2 · 7 P3",
+      "tags": [],
+      "title": "2026-04-01-documentation-website-review",
+      "top_keywords": [
+        "gen_ref_pages.py",
+        "mkdocs.yml",
+        "docs.yml",
+        "dev",
+        ".gitignore",
+        "uv.lock",
+        ".github/workflows/docs.yml",
+        ".cg-docs/",
+        "errors.md",
+        "getting-started.md"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "review",
+      "path": ".cg-docs/reviews/2026-04-01-povineq-light-review.md",
+      "slug": "2026-04-01-povineq-light-review",
+      "status": "",
+      "summary": "**Review depth**: light **Date**: 2026-04-01 **Files reviewed**: 34 (14 source + 14 test + pyproject.toml + CI + config) **Findings**: 4 P1 · 18 P2 · 10 P3",
+      "tags": [],
+      "title": "2026-04-01-povineq-light-review",
+      "top_keywords": [
+        "test_response.py",
+        "type_checking",
+        "fix",
+        "subgroup",
+        "get_client()",
+        "country_profiles.py",
+        "utils.py",
+        "test_client.py",
+        "test_request.py",
+        "stats.py"
+      ]
+    },
+    {
+      "date": "2026-04-01",
+      "entity_type": "solution",
+      "path": ".cg-docs/solutions/bugs/2026-04-01-pandas-inplace-returns-none.md",
+      "slug": "2026-04-01-pandas-inplace-returns-none",
+      "status": "",
+      "summary": "Code using `inplace=True` on pandas DataFrame methods (e.g., `rename`, `drop`, `set_index`, `sort_values`) stores `None` in the variable when the result is assigned or chained. This produces a `NoneType` object that persists silently until a later operation fails with: The symptom appears far from the source of the bug, making it hard to diagnose. **Concrete example that caused a bug in this codebase:**",
+      "tags": [
+        "pandas",
+        "inplace",
+        "dataframe",
+        "NoneType",
+        "silent-bug"
+      ],
+      "title": "pandas inplace=True silently returns None, causing downstream NoneType errors",
+      "top_keywords": [
+        "inplace=true",
+        "inplace",
+        "pandas",
+        "nonetype",
+        "silently",
+        "rename",
+        "drop",
+        "sort_values",
+        "root",
+        "cause"
+      ]
+    },
+    {
+      "date": "2026-04-01",
+      "entity_type": "solution",
+      "path": ".cg-docs/solutions/build-errors/2026-04-01-hishel-v1-api-removed.md",
+      "slug": "2026-04-01-hishel-v1-api-removed",
+      "status": "",
+      "summary": "Code that used `hishel` for caching HTTP responses (commonly paired with `httpx`) would fail at import time with: No deprecation warning is raised; the classes simply no longer exist in hishel >= 1.0.",
+      "tags": [
+        "hishel",
+        "httpx",
+        "caching",
+        "http-client",
+        "breaking-change"
+      ],
+      "title": "hishel >=1.0 removed CacheTransport/FileStorage/Controller API",
+      "top_keywords": [
+        "hishel",
+        "httpx.httptransport(retries=n)",
+        "httpx",
+        "controller",
+        "cachetransport",
+        "filestorage",
+        "httpx-cache",
+        "problem",
+        "root",
+        "cause"
+      ]
+    },
+    {
+      "date": "2026-04-01",
+      "entity_type": "solution",
+      "path": ".cg-docs/solutions/build-errors/2026-04-01-pep735-dependency-groups-pip-incompatible.md",
+      "slug": "2026-04-01-pep735-dependency-groups-pip-incompatible",
+      "status": "",
+      "summary": "Defining dev or docs dependencies under `[dependency-groups]` in `pyproject.toml` (PEP 735 syntax) works perfectly with `uv sync --group dev`, but contributors or CI runners using plain `pip` get an incomplete environment with no error: Additionally, if `dev` and `docs` are placed under `[project.optional-dependencies]` instead to work around this, those extras are published to PyPI, creating a confusing `pip install povineq[dev]` public entry point for user-facing package extras.",
+      "tags": [
+        "uv",
+        "pip",
+        "pep735",
+        "dependency-groups",
+        "pyproject-toml",
+        "optional-dependencies",
+        "packaging"
+      ],
+      "title": "PEP 735 [dependency-groups] is uv-only; pip silently ignores them",
+      "top_keywords": [
+        "[dependency-groups]",
+        "pip",
+        "[project.optional-dependencies]",
+        "dependency-groups",
+        "uv-only",
+        "silently",
+        "dev",
+        "pypi",
+        "pytest",
+        "published"
+      ]
+    },
+    {
+      "date": "2026-04-01",
+      "entity_type": "solution",
+      "path": ".cg-docs/solutions/git-workflows/2026-04-01-mkdocs-github-pages-uv-production-pattern.md",
+      "slug": "2026-04-01-mkdocs-github-pages-uv-production-pattern",
+      "status": "",
+      "summary": "A minimal `mkdocs gh-deploy` workflow works locally but has several reliability problems in CI: 1. **Race condition**: Two rapid pushes trigger concurrent deploys; both run `--force` simultaneously and can corrupt `gh-pages`. 2. **Unnecessary builds**: Any commit (test fix, lock file bump) triggers a full docs rebuild, wasting CI minutes. 3. **Hidden build failures**: `gh-deploy` combines build + push; if the build fails, it is unclear whether a partial deploy occurred. 4. **Unpinned tooling**: `uv-version: \"latest\"` or `\"0.6.x\"` allows silent minor-version drift between CI runs. 5. **No PR feedback**: Documentation build errors only surface after merge when the docs workflow runs...",
+      "tags": [
+        "mkdocs",
+        "github-pages",
+        "uv",
+        "ci-cd",
+        "github-actions",
+        "documentation",
+        "concurrency",
+        "mkdocstrings",
+        "material"
+      ],
+      "title": "Production-ready MkDocs + GitHub Pages + uv CI/CD workflow",
+      "top_keywords": [
+        "github",
+        "mkdocs",
+        "mkdocs-gen-files",
+        "workflow",
+        "ci.yml",
+        "dev",
+        "test",
+        "yml",
+        "workflows",
+        "extras"
+      ]
+    },
+    {
+      "date": "2026-08-17",
+      "entity_type": "solution",
+      "path": ".cg-docs/solutions/git-workflows/2026-08-17-pypi-release-gates-and-oidc.md",
+      "slug": "2026-08-17-pypi-release-gates-and-oidc",
+      "status": "",
+      "summary": "The package could pass local tests and metadata checks while CI omitted runtime Polars coverage, the lockfile was not enforced, and the tag workflow could build and publish independently of the full quality gate. Twine validation alone did not prove that wheel, optional-extra, or sdist installations worked. The first attempt also could not produce remote evidence because CI only ran on `main` and pull requests, not on the release branch.",
+      "tags": [
+        "pypi",
+        "uv",
+        "github-actions",
+        "oidc",
+        "artifacts",
+        "polars",
+        "release-gates"
+      ],
+      "title": "Harden Python package release gates with locked CI and OIDC publication",
+      "top_keywords": [
+        "oidc",
+        "release",
+        "polars",
+        "locked",
+        "pypi",
+        "python",
+        "package",
+        "gates",
+        "publication",
+        "harden"
+      ]
+    },
+    {
+      "date": "2026-04-01",
+      "entity_type": "solution",
+      "path": ".cg-docs/solutions/testing-patterns/2026-04-01-loguru-no-fstrings.md",
+      "slug": "2026-04-01-loguru-no-fstrings",
+      "status": "",
+      "summary": "Calls like `logger.debug(f\"Processing {len(data)} records\")` pass a pre-formatted string to loguru. If the `DEBUG` level is disabled in production: 1. The f-string is **still evaluated** — wasting CPU, especially inside loops. 2. Structured log sinks (JSON, Datadog, Loki) cannot extract the field values as separate searchable keys. 3. Large objects are `repr()`-ed eagerly, causing unnecessary memory allocation.",
+      "tags": [
+        "loguru",
+        "logging",
+        "performance",
+        "f-string",
+        "structured-logging"
+      ],
+      "title": "loguru: avoid f-strings in log calls (defeats lazy evaluation)",
+      "top_keywords": [
+        "loguru",
+        "f-strings",
+        "cg-skill-python-best-practices",
+        "avoid",
+        "debug",
+        "caplog",
+        "capfd",
+        "problem",
+        "root",
+        "cause"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "feature",
+      "path": "roadmap.json#architecture-and-stack-design",
+      "slug": "architecture-and-stack-design",
+      "status": "done",
+      "summary": "Architecture and stack design",
+      "tags": [],
+      "title": "Architecture and stack design",
+      "top_keywords": [
+        "architecture",
+        "stack",
+        "design",
+        "pipr",
+        "parity",
+        "feature",
+        "milestone",
+        "objective",
+        "implement",
+        "python"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "feature",
+      "path": "roadmap.json#package-scaffolding",
+      "slug": "package-scaffolding",
+      "status": "done",
+      "summary": "Package scaffolding",
+      "tags": [],
+      "title": "Package scaffolding",
+      "top_keywords": [
+        "package",
+        "scaffolding",
+        "pipr",
+        "parity",
+        "feature",
+        "milestone",
+        "objective",
+        "implement",
+        "python",
+        "pip"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "feature",
+      "path": "roadmap.json#core-infrastructure",
+      "slug": "core-infrastructure",
+      "status": "done",
+      "summary": "Core infrastructure",
+      "tags": [],
+      "title": "Core infrastructure",
+      "top_keywords": [
+        "core",
+        "infrastructure",
+        "pipr",
+        "parity",
+        "feature",
+        "milestone",
+        "objective",
+        "implement",
+        "python",
+        "pip"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "feature",
+      "path": "roadmap.json#core-stats-functions",
+      "slug": "core-stats-functions",
+      "status": "done",
+      "summary": "Core stats functions (get_stats, get_wb, get_agg)",
+      "tags": [],
+      "title": "Core stats functions (get_stats, get_wb, get_agg)",
+      "top_keywords": [
+        "core",
+        "stats",
+        "functions",
+        "get_stats",
+        "get_wb",
+        "get_agg",
+        "pipr",
+        "parity",
+        "feature",
+        "milestone"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "feature",
+      "path": "roadmap.json#country-profile-functions",
+      "slug": "country-profile-functions",
+      "status": "done",
+      "summary": "Country profile functions (get_cp, get_cp_ki)",
+      "tags": [],
+      "title": "Country profile functions (get_cp, get_cp_ki)",
+      "top_keywords": [
+        "country",
+        "profile",
+        "functions",
+        "get_cp",
+        "get_cp_ki",
+        "pipr",
+        "parity",
+        "feature",
+        "milestone",
+        "objective"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "feature",
+      "path": "roadmap.json#auxiliary-data-functions",
+      "slug": "auxiliary-data-functions",
+      "status": "done",
+      "summary": "Auxiliary data functions (get_aux and all convenience wrappers)",
+      "tags": [],
+      "title": "Auxiliary data functions (get_aux and all convenience wrappers)",
+      "top_keywords": [
+        "auxiliary",
+        "functions",
+        "get_aux",
+        "convenience",
+        "wrappers",
+        "pipr",
+        "parity",
+        "feature",
+        "milestone",
+        "objective"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "feature",
+      "path": "roadmap.json#utility-functions",
+      "slug": "utility-functions",
+      "status": "done",
+      "summary": "Utility functions (check_api, get_versions, get_pip_info, cache helpers)",
+      "tags": [],
+      "title": "Utility functions (check_api, get_versions, get_pip_info, cache helpers)",
+      "top_keywords": [
+        "utility",
+        "functions",
+        "check_api",
+        "get_versions",
+        "get_pip_info",
+        "cache",
+        "helpers",
+        "pipr",
+        "parity",
+        "feature"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "feature",
+      "path": "roadmap.json#tests",
+      "slug": "tests",
+      "status": "done",
+      "summary": "Tests (pytest suite mirroring pipr test suite)",
+      "tags": [],
+      "title": "Tests (pytest suite mirroring pipr test suite)",
+      "top_keywords": [
+        "suite",
+        "pipr",
+        "tests",
+        "pytest",
+        "mirroring",
+        "test",
+        "parity",
+        "feature",
+        "milestone",
+        "objective"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "feature",
+      "path": "roadmap.json#documentation-and-readme",
+      "slug": "documentation-and-readme",
+      "status": "done",
+      "summary": "Documentation and README",
+      "tags": [],
+      "title": "Documentation and README",
+      "top_keywords": [
+        "documentation",
+        "readme",
+        "pipr",
+        "parity",
+        "feature",
+        "milestone",
+        "objective",
+        "implement",
+        "python",
+        "pip"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "feature",
+      "path": "roadmap.json#pypi-publishing-and-ci-cd",
+      "slug": "pypi-publishing-and-ci-cd",
+      "status": "active",
+      "summary": "PyPI publishing and CI/CD",
+      "tags": [],
+      "title": "PyPI publishing and CI/CD",
+      "top_keywords": [
+        "pypi",
+        "publishing",
+        "pipr",
+        "parity",
+        "feature",
+        "milestone",
+        "objective",
+        "implement",
+        "python",
+        "pip"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "feature",
+      "path": "roadmap.json#documentation-website-mkdocs-material",
+      "slug": "documentation-website-mkdocs-material",
+      "status": "done",
+      "summary": "Documentation website (MkDocs + Material)",
+      "tags": [],
+      "title": "Documentation website (MkDocs + Material)",
+      "top_keywords": [
+        "documentation",
+        "website",
+        "mkdocs",
+        "material",
+        "pipr",
+        "parity",
+        "feature",
+        "milestone",
+        "objective",
+        "implement"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "feature",
+      "path": "roadmap.json#get-gd-grouped-data",
+      "slug": "get-gd-grouped-data",
+      "status": "idea",
+      "summary": "get_gd — grouped data from user-supplied distributions",
+      "tags": [],
+      "title": "get_gd — grouped data from user-supplied distributions",
+      "top_keywords": [
+        "get_gd",
+        "grouped",
+        "user-supplied",
+        "distributions",
+        "support",
+        "feature",
+        "milestone",
+        "extended",
+        "features",
+        "objective"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "feature",
+      "path": "roadmap.json#cli",
+      "slug": "cli",
+      "status": "idea",
+      "summary": "CLI (thin wrapper around core functions)",
+      "tags": [],
+      "title": "CLI (thin wrapper around core functions)",
+      "top_keywords": [
+        "cli",
+        "thin",
+        "wrapper",
+        "core",
+        "functions",
+        "support",
+        "feature",
+        "milestone",
+        "extended",
+        "features"
+      ]
+    },
+    {
+      "date": "",
+      "entity_type": "feature",
+      "path": "roadmap.json#async-support",
+      "slug": "async-support",
+      "status": "idea",
+      "summary": "Async support",
+      "tags": [],
+      "title": "Async support",
+      "top_keywords": [
+        "support",
+        "async",
+        "feature",
+        "milestone",
+        "extended",
+        "features",
+        "objective",
+        "grouped",
+        "get_gd",
+        "cli"
+      ]
+    }
+  ],
+  "entity_count": 30,
+  "generated": "2026-08-17",
+  "schema_version": "0.2.0",
+  "topic_count": 4,
+  "topics": [
+    {
+      "entity_count": 6,
+      "entity_paths": [
+        "roadmap.json#core-infrastructure",
+        "roadmap.json#core-stats-functions",
+        "roadmap.json#country-profile-functions",
+        "roadmap.json#auxiliary-data-functions",
+        "roadmap.json#utility-functions",
+        "roadmap.json#cli"
+      ],
+      "keywords": [
+        "functions",
+        "core",
+        "wrapper"
+      ],
+      "label": "Functions / Core / Wrapper",
+      "slug": "functions-core-wrapper"
+    },
+    {
+      "entity_count": 6,
+      "entity_paths": [
+        ".cg-docs/brainstorms/2026-04-01-documentation-website.md",
+        ".cg-docs/plans/2026-04-01-documentation-website.md",
+        ".cg-docs/reviews/2026-04-01-documentation-website-light-review.md",
+        ".cg-docs/reviews/2026-04-01-documentation-website-review.md",
+        ".cg-docs/solutions/build-errors/2026-04-01-pep735-dependency-groups-pip-incompatible.md",
+        ".cg-docs/solutions/git-workflows/2026-04-01-mkdocs-github-pages-uv-production-pattern.md"
+      ],
+      "keywords": [
+        "gen_ref_pages.py",
+        "mkdocs.yml",
+        ".gitignore"
+      ],
+      "label": "Gen_Ref_Pages.Py / Mkdocs.Yml / .Gitignore",
+      "slug": "gen-ref-pages-py-mkdocs-yml-gitignore"
+    },
+    {
+      "entity_count": 3,
+      "entity_paths": [
+        ".cg-docs/solutions/bugs/2026-04-01-pandas-inplace-returns-none.md",
+        ".cg-docs/solutions/build-errors/2026-04-01-hishel-v1-api-removed.md",
+        ".cg-docs/solutions/testing-patterns/2026-04-01-loguru-no-fstrings.md"
+      ],
+      "keywords": [
+        "hishel",
+        "inplace=true",
+        "loguru"
+      ],
+      "label": "Hishel / Inplace=True / Loguru",
+      "slug": "hishel-inplace-true-loguru"
+    },
+    {
+      "entity_count": 3,
+      "entity_paths": [
+        ".cg-docs/plans/2026-03-31-povineq-v1-full-implementation.md",
+        ".cg-docs/reviews/2026-03-31-povineq-v1-full-implementation-review.md",
+        ".cg-docs/reviews/2026-04-01-povineq-light-review.md"
+      ],
+      "keywords": [
+        "pipr",
+        "_request.py",
+        "utils.py"
+      ],
+      "label": "Pipr / _Request.Py / Utils.Py",
+      "slug": "pipr-request-py-utils-py"
+    }
+  ]
+}

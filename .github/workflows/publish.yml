@@ -45,7 +45,7 @@ jobs:
 
       - name: Require publication-ready documentation
         run: |
-          if grep -RniE "first release pending|pending the release gates|not yet" README.md docs; then
+          if grep -RniE "first release pending|pending the release gates|not yet|unreleased" README.md docs; then
             echo "Release-facing documentation still contains stale pre-publication wording."
             exit 1
           fi

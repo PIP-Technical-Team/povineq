@@ -1,6 +1,6 @@
 {
   "schemaVersion": "compound-gpid-active-state-v1",
-  "updatedAt": "2026-08-17T16:46:00Z",
+  "updatedAt": "2026-08-17T18:03:00Z",
   "workflow": "/cg-work",
   "status": "blocked",
   "branch": "chore/publish-pypi",
@@ -9,9 +9,9 @@
   "currentPhase": 2,
   "evidenceStatus": [
     {"id": "V1", "status": "passed", "artifact": "public-PyPI lock/build and credential scan"},
-    {"id": "V2", "status": "passed", "artifact": "203 tests, 92.70% branch coverage, Ruff, mypy, docs"},
-    {"id": "V3", "status": "passed", "artifact": "Twine, manifest, wheel/sdist clean installs"},
-    {"id": "V4", "status": "passed", "artifact": "GitHub Actions run 32047088141"},
+    {"id": "V2", "status": "passed", "artifact": "210 tests, 92.87% branch coverage, Ruff, mypy, docs"},
+    {"id": "V3", "status": "passed", "artifact": "Twine, manifest, pinned clean wheel/sdist installs"},
+    {"id": "V4", "status": "passed", "artifact": "GitHub Actions run 32052515633"},
     {"id": "V5", "status": "passed", "artifact": "Local matching/mismatched tag assertions"},
     {"id": "V6", "status": "blocked", "artifact": "PyPI endpoint 404; ownership and confirmation pending"},
     {"id": "V7", "status": "passed", "artifact": "Strict MkDocs build and release docs"}

@@ -85,3 +85,19 @@ final-status: blocked
 - Result: passed.
 - Jobs passed: Python 3.10, 3.11, 3.12, and 3.13 tests; quality; build/artifacts; docs.
 - Non-blocking annotation: GitHub reports Node.js 20 deprecation notices for existing action major versions.
+
+## Review Remediation: 2026-08-17
+
+- Verification review fallback: legacy review files had no tracked `findings:` map, so no P2/P3 suppression was applied.
+- Critical runtime fixes: Polars nowcast filtering, auxiliary catalog extraction/storage, `get_cp_ki` backend conversion, runtime API-version/format validation, and source-version fallback.
+- Release hardening: locked public-PyPI syncs, pinned Hatchling, pinned action SHAs, Polars runtime CI, clean base/Polars/sdist installation checks, cleared build output, protected-tag/main-ancestry checks, and reusable full-CI gating before publish.
+- Latest commit: `1d86766717fe7e2d1f70ca48350a5d9f7564a7d0`.
+- Latest GitHub Actions run: [32052515633](https://github.com/PIP-Technical-Team/povineq/actions/runs/32052515633), passed all jobs: Python 3.10-3.13 tests, quality, Polars runtime, artifacts, and docs.
+- Review findings resolved in source/workflows: P0/P1 correctness and release-integrity findings addressed; remaining P0 items are external GitHub/PyPI administration, not code defects.
+
+## Final External Blockers
+
+- The repository has no protected `pypi` environment; only `github-pages` is configured.
+- No protected `v*` tag/ruleset was found.
+- `https://pypi.org/pypi/povineq/json` still returns `404`; trusted-publisher registration and project ownership remain pending.
+- No release tag was created and no PyPI upload was attempted. Explicit user confirmation remains required immediately before the irreversible release.

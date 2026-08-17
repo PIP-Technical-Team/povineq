@@ -30,8 +30,9 @@ the same parameter conventions, the same return shapes.
 
 ## Installation
 
-!!! note "Published releases"
-    Install the package from PyPI when using a published release:
+!!! note "First release pending"
+    The first PyPI release is being prepared. Install from PyPI only after
+    publication:
 
     ```bash
     pip install povineq
