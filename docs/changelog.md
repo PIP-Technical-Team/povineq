@@ -5,7 +5,7 @@ for the full release history.
 
 ---
 
-## 0.1.1 — Pending release
+## 0.1.1 — Security-hardened dependencies
 
 Security-hardened dependency floors for transitive runtime and tooling
 dependencies:

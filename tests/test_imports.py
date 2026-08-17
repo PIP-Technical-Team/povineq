@@ -12,14 +12,14 @@ import povineq
 def test_version_accessible():
     assert hasattr(povineq, "__version__")
     assert isinstance(povineq.__version__, str)
-    assert povineq.__version__ == "0.1.0"
+    assert povineq.__version__ == "0.1.1"
 
 
 def test_version_falls_back_when_distribution_metadata_is_missing():
     with patch("importlib.metadata.version", side_effect=PackageNotFoundError):
         try:
             reloaded = importlib.reload(povineq)
-            assert reloaded.__version__ == "0.1.0"
+            assert reloaded.__version__ == "0.1.1"
         finally:
             importlib.reload(povineq)
 
