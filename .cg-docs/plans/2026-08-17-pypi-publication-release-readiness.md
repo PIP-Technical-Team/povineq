@@ -1,7 +1,7 @@
 ---
 date: 2026-08-17
 title: "Publish povineq to PyPI with release-readiness gates"
-status: active
+status: completed
 scope: "Standard"
 brainstorm: ".cg-docs/brainstorms/2026-03-31-povineq-architecture-and-stack.md"
 language: "Python"
@@ -11,8 +11,8 @@ artifact-schema-version: 1
 phases: 2
 tags: [python, packaging, pypi, release, ci-cd, testing, uv]
 execution-report: ".cg-docs/work-reports/2026-08-17-pypi-publication-release-readiness.md"
-completed-phases: [1]
-current-phase: 2
+completed-phases: [1, 2]
+current-phase: complete
 ---
 
 # Plan: Publish povineq to PyPI with Release-Readiness Gates

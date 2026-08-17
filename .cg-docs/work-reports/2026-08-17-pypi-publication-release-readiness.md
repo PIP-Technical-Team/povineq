@@ -3,7 +3,7 @@ plan: .cg-docs/plans/2026-08-17-pypi-publication-release-readiness.md
 workflow: /cg-work
 started: 2026-08-17T15:28:44Z
 active-deviation-policy: ask
-final-status: blocked
+final-status: completed
 ---
 
 # Execution Report
@@ -109,3 +109,25 @@ final-status: blocked
 - The user confirmed that the PyPI pending-publisher setup was completed. This private configuration will be verified by the tag-triggered OIDC exchange.
 - The legacy docs deployment failed because its generated `gh-pages` branch had advanced; the final release-preparation commit changes `mkdocs gh-deploy` to force-update that generated branch.
 - The final documentation commit replaces pre-publication markers, after which main CI must pass before `v0.1.0` is created.
+
+## Release Completion: 2026-08-17T20:07:27Z
+
+- Release-preparation commit `0fd3a0375645930f7ad87eddccc9bf19e4b901b8` passed main CI run [32063691280](https://github.com/PIP-Technical-Team/povineq/actions/runs/32063691280) and Docs deployment run [32063691271](https://github.com/PIP-Technical-Team/povineq/actions/runs/32063691271).
+- The generated `gh-pages` branch deployment was repaired by forcing MkDocs to update that generated branch.
+- Protected annotated tag `v0.1.0` was created on `0fd3a0375645930f7ad87eddccc9bf19e4b901b8`.
+- Publish workflow [32063788842](https://github.com/PIP-Technical-Team/povineq/actions/runs/32063788842) passed tag validation, complete reusable CI, artifact verification, OIDC token exchange, and PyPI upload.
+- PyPI metadata confirms `povineq 0.1.0` with wheel `povineq-0.1.0-py3-none-any.whl` and source distribution `povineq-0.1.0.tar.gz`.
+- Fresh public-PyPI installations on Python 3.10 passed for `povineq==0.1.0` and `povineq[polars]==0.1.0`.
+- Roadmap feature `pypi-publishing-and-ci-cd` is `done`.
+
+## Final Evidence
+
+| ID | Status | Result |
+|----|--------|--------|
+| V1 | passed | Public-PyPI lock/build and credential-safe configuration. |
+| V2 | passed | CI and local quality gates passed; latest suite evidence is 210 tests and 92.87% branch coverage. |
+| V3 | passed | Twine, manifest, base wheel, Polars wheel, and sdist clean-install validation passed. |
+| V4 | passed | Main CI run 32063691280 passed all release jobs. |
+| V5 | passed | `v0.1.0` tag validation confirmed version equality, protected tag, and main ancestry. |
+| V6 | passed | OIDC upload passed; PyPI JSON metadata and fresh public installations confirmed version 0.1.0. |
+| V7 | passed | Release docs passed strict build and deployed successfully to GitHub Pages. |
