@@ -36,7 +36,7 @@ polars = ["polars>=1.0"]
 
 [dependency-groups]
 dev = [
-    "pytest>=8.0",
+    "pytest>=9.0.3",
     "pytest-httpx>=0.30",
     "ruff>=0.5",
     "mypy>=1.10",
@@ -59,6 +59,16 @@ Homepage = "https://github.com/PIP-Technical-Team/povineq"
 Documentation = "https://pip-technical-team.github.io/povineq/"
 Repository = "https://github.com/PIP-Technical-Team/povineq"
 Issues = "https://github.com/PIP-Technical-Team/povineq/issues"
+
+[tool.uv]
+# Floors pin patched versions of transitive dependencies that are not declared
+# directly: idna (via httpx, runtime), urllib3 (via twine/readme-renderer,
+# release tooling), pymdown-extensions (via mkdocs-material, docs tooling).
+constraint-dependencies = [
+    "idna>=3.15",
+    "urllib3>=2.7.0",
+    "pymdown-extensions>=11.0.1",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/povineq"]
