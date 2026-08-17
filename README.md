@@ -13,8 +13,8 @@ pip install povineq
 pip install "povineq[polars]"
 ```
 
-The package supports Python 3.10 through 3.13. For unreleased development
-versions, install directly from GitHub:
+The package supports Python 3.10 through 3.13. For development snapshots,
+install directly from GitHub:
 
 ```bash
 pip install git+https://github.com/PIP-Technical-Team/povineq.git
@@ -88,8 +88,7 @@ requires the `vX.Y.Z` tag to match the version in `pyproject.toml`, builds and
 checks the artifacts, and passes only those artifacts to the publish job.
 Publishing uses PyPI trusted publishing through the self-service GitHub
 environment `pypi`, which is restricted to protected `v*` tags. No PyPI token
-is stored in the repository. The PyPI pending publisher must be registered
-before the first release.
+is stored in the repository.
 
 The PyPI trusted publisher must be registered with owner `PIP-Technical-Team`,
 repository `povineq`, workflow `publish.yml`, and environment `pypi`.

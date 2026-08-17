@@ -14,13 +14,11 @@ and understanding the result.
 
 ## Installation
 
-!!! note "First release pending"
-    The first PyPI release is being prepared. Install from PyPI only after
-    publication:
+Install the released package from PyPI:
 
-    ```bash
-    pip install povineq
-    ```
+```bash
+pip install povineq
+```
 
 For [polars](https://pola.rs/) support alongside the default pandas output:
 
@@ -28,7 +26,7 @@ For [polars](https://pola.rs/) support alongside the default pandas output:
 pip install "povineq[polars]"
 ```
 
-For unreleased development versions, install directly from GitHub:
+For development snapshots, install directly from GitHub:
 
 ```bash
 pip install git+https://github.com/PIP-Technical-Team/povineq.git

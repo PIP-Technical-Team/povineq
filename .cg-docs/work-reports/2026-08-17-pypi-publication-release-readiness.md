@@ -101,3 +101,11 @@ final-status: blocked
 - Active repository ruleset `Protect PyPI release tags` protects `v*` creation, updates, and deletion; organization admins can self-service releases.
 - `https://pypi.org/pypi/povineq/json` still returns `404`; PyPI pending-publisher registration remains pending.
 - No release tag was created and no PyPI upload was attempted. Explicit user confirmation remains required immediately before the irreversible release.
+
+## Release Continuation: 2026-08-17
+
+- The release branch was merged into `main` at `0b08c8d319acb6adcd217f1f77d5eabcea015bb6`; main CI run `32063337212` passed.
+- The self-service `pypi` environment and protected `v*` tag ruleset were verified after merge.
+- The user confirmed that the PyPI pending-publisher setup was completed. This private configuration will be verified by the tag-triggered OIDC exchange.
+- The legacy docs deployment failed because its generated `gh-pages` branch had advanced; the final release-preparation commit changes `mkdocs gh-deploy` to force-update that generated branch.
+- The final documentation commit replaces pre-publication markers, after which main CI must pass before `v0.1.0` is created.

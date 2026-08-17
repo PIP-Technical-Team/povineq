@@ -1,9 +1,9 @@
 {
   "schemaVersion": "compound-gpid-active-state-v1",
-  "updatedAt": "2026-08-17T19:43:00Z",
+  "updatedAt": "2026-08-17T20:00:05Z",
   "workflow": "/cg-work",
-  "status": "blocked",
-  "branch": "chore/publish-pypi",
+  "status": "active",
+  "branch": "main",
   "plan": ".cg-docs/plans/2026-08-17-pypi-publication-release-readiness.md",
   "executionReport": ".cg-docs/work-reports/2026-08-17-pypi-publication-release-readiness.md",
   "currentPhase": 2,
@@ -11,17 +11,17 @@
     {"id": "V1", "status": "passed", "artifact": "public-PyPI lock/build and credential scan"},
     {"id": "V2", "status": "passed", "artifact": "210 tests, 92.87% branch coverage, Ruff, mypy, docs"},
     {"id": "V3", "status": "passed", "artifact": "Twine, manifest, pinned clean wheel/sdist installs"},
-    {"id": "V4", "status": "passed", "artifact": "GitHub Actions run 32052515633"},
+    {"id": "V4", "status": "passed", "artifact": "GitHub Actions run 32063337212 on main"},
     {"id": "V5", "status": "passed", "artifact": "Local matching/mismatched tag assertions"},
-    {"id": "V6", "status": "blocked", "artifact": "PyPI endpoint 404; ownership and confirmation pending"},
+    {"id": "V6", "status": "in_progress", "artifact": "Pending publisher reportedly configured; tag workflow will verify OIDC"},
     {"id": "V7", "status": "passed", "artifact": "Strict MkDocs build and release docs"}
   ],
   "unresolvedDecisions": [
-    {"id": "D2", "summary": "Register PyPI pending publisher and explicitly approve v0.1.0 publication", "blocking": true}
+    {"id": "D2", "summary": "Verify pending publisher through the protected v0.1.0 OIDC release", "blocking": true}
   ],
   "artifactRefs": [
     {"kind": "plan", "path": ".cg-docs/plans/2026-08-17-pypi-publication-release-readiness.md", "status": "active"},
-    {"kind": "execution-report", "path": ".cg-docs/work-reports/2026-08-17-pypi-publication-release-readiness.md", "status": "blocked"}
+    {"kind": "execution-report", "path": ".cg-docs/work-reports/2026-08-17-pypi-publication-release-readiness.md", "status": "active"}
   ],
-  "nextCommand": "/cg-review mode:verify"
+  "nextCommand": "git tag -a v0.1.0 -m \"povineq 0.1.0\""
 }

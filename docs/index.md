@@ -30,13 +30,11 @@ the same parameter conventions, the same return shapes.
 
 ## Installation
 
-!!! note "First release pending"
-    The first PyPI release is being prepared. Install from PyPI only after
-    publication:
+Install the released package from PyPI:
 
-    ```bash
-    pip install povineq
-    ```
+```bash
+pip install povineq
+```
 
 For optional [polars](https://pola.rs/) support:
 
@@ -44,8 +42,8 @@ For optional [polars](https://pola.rs/) support:
 pip install "povineq[polars]"
 ```
 
-The package supports Python 3.10 through 3.13. For unreleased development
-versions, install from GitHub:
+The package supports Python 3.10 through 3.13. For development snapshots,
+install from GitHub:
 
 ```bash
 pip install git+https://github.com/PIP-Technical-Team/povineq.git
@@ -54,10 +52,7 @@ pip install "povineq[polars] @ git+https://github.com/PIP-Technical-Team/povineq
 
 Releases are validated and published by `.github/workflows/publish.yml` using
 PyPI trusted publishing. The self-service `pypi` environment is restricted to
-protected `v*` tags. Before the first release, register owner
-`PIP-Technical-Team`, repository `povineq`, workflow `publish.yml`, and
-environment `pypi` as PyPI's pending trusted publisher. No credentials belong
-in the documentation or repository.
+protected `v*` tags. No credentials belong in the documentation or repository.
 
 ---
 

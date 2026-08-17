@@ -46,4 +46,4 @@ jobs:
         run: python -c "import pathlib; pages = list(pathlib.Path('site/reference').glob('*.html')); assert pages, 'Reference pages missing from site/reference/'"
 
       - name: Deploy docs
-        run: uv run --locked mkdocs gh-deploy
+        run: uv run --locked mkdocs gh-deploy --force
