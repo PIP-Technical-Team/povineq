@@ -5,7 +5,7 @@ Mirrors the functionality of the [`pipr`](https://github.com/worldbank/pipr) R p
 
 ## Installation
 
-Once the first release is published, install the package from PyPI:
+Install the released package from PyPI:
 
 ```bash
 pip install povineq
