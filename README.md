@@ -86,9 +86,10 @@ env -u UV_INDEX -u UV_INDEX_URL -u UV_EXTRA_INDEX_URL UV_DEFAULT_INDEX=https://p
 Releases are tag-gated by `.github/workflows/publish.yml`. The validation job
 requires the `vX.Y.Z` tag to match the version in `pyproject.toml`, builds and
 checks the artifacts, and passes only those artifacts to the publish job.
-Publishing is intended to use PyPI trusted publishing through a protected
-GitHub environment named `pypi`; that environment and the PyPI registration
-must be configured before a release. No PyPI token is stored in the repository.
+Publishing uses PyPI trusted publishing through the self-service GitHub
+environment `pypi`, which is restricted to protected `v*` tags. No PyPI token
+is stored in the repository. The PyPI pending publisher must be registered
+before the first release.
 
 The PyPI trusted publisher must be registered with owner `PIP-Technical-Team`,
 repository `povineq`, workflow `publish.yml`, and environment `pypi`.

@@ -4,7 +4,7 @@ depth: full
 type: standard
 plan: .cg-docs/plans/2026-08-17-pypi-publication-release-readiness.md
 findings:
-  P0.1: open
+  P0.1: fixed
   P0.2: open
   P0.3: fixed
   P0.4: fixed
@@ -30,14 +30,14 @@ so no P2/P3 suppression was applied.
 
 ### P0 — BLOCKING
 
-- **[P0.1]** `.github/workflows/publish.yml:14` — Protected `v*` tag rules are
-  required but are not configured in the repository. The workflow now refuses
-  unprotected tag events with `github.ref_protected == true`; configure a
-  protected release-tag ruleset before the first release.
-- **[P0.2]** `.github/workflows/publish.yml:64-69` — The `pypi` environment and
-  PyPI trusted publisher are external configuration and are not present yet.
-  Create the protected environment with required reviewers and register the
-  exact owner, repository, workflow, and environment at PyPI.
+- **[P0.1]** `.github/workflows/publish.yml:14` — Resolved: active repository
+  ruleset `Protect PyPI release tags` protects `v*` tag creation, updates, and
+  deletion. Organization admins retain self-service release capability.
+- **[P0.2]** `.github/workflows/publish.yml:64-69` — The self-service `pypi`
+  environment is configured, but PyPI's pending trusted publisher is not yet
+  registered. In the PyPI account publishing settings, register project
+  `povineq` for owner `PIP-Technical-Team`, repository `povineq`, workflow
+  `publish.yml`, and environment `pypi`.
 
 ### P1 — RESOLVED
 
@@ -75,7 +75,7 @@ so no P2/P3 suppression was applied.
 
 ## Residual Risk
 
-The release remains intentionally blocked until repository administrators create
-the protected `pypi` environment and protected `v*` tag rules, PyPI ownership and
-trusted-publisher registration are complete, and the user explicitly approves
-the first production tag/upload. No tag or PyPI upload was attempted.
+The release remains intentionally blocked until PyPI pending-publisher
+registration is complete and the user explicitly approves the first production
+tag/upload. The self-service `pypi` environment and protected `v*` tag rules are
+configured. No tag or PyPI upload was attempted.

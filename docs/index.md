@@ -52,12 +52,12 @@ pip install git+https://github.com/PIP-Technical-Team/povineq.git
 pip install "povineq[polars] @ git+https://github.com/PIP-Technical-Team/povineq.git"
 ```
 
-Releases are intended to be validated and published by
-`.github/workflows/publish.yml` using PyPI trusted publishing. Before the first
-release, configure the protected `pypi` environment and register owner
+Releases are validated and published by `.github/workflows/publish.yml` using
+PyPI trusted publishing. The self-service `pypi` environment is restricted to
+protected `v*` tags. Before the first release, register owner
 `PIP-Technical-Team`, repository `povineq`, workflow `publish.yml`, and
-environment `pypi` as the trusted publisher. No credentials belong in the
-documentation or repository.
+environment `pypi` as PyPI's pending trusted publisher. No credentials belong
+in the documentation or repository.
 
 ---
 

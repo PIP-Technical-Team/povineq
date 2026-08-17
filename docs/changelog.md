@@ -10,5 +10,5 @@ for the full release history.
 Initial release of the `povineq` Python wrapper for the World Bank PIP API,
 distributed while the package remains in alpha-stage development, including
 poverty statistics, country profiles, auxiliary data, and pandas/polars output
-support. Publication is blocked until the protected PyPI
-environment, trusted publisher, and explicit release approval are in place.
+support. Publication is blocked until the PyPI pending trusted publisher is
+registered and the release tag is explicitly approved.

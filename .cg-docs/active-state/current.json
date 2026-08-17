@@ -1,6 +1,6 @@
 {
   "schemaVersion": "compound-gpid-active-state-v1",
-  "updatedAt": "2026-08-17T18:03:00Z",
+  "updatedAt": "2026-08-17T19:43:00Z",
   "workflow": "/cg-work",
   "status": "blocked",
   "branch": "chore/publish-pypi",
@@ -17,7 +17,7 @@
     {"id": "V7", "status": "passed", "artifact": "Strict MkDocs build and release docs"}
   ],
   "unresolvedDecisions": [
-    {"id": "D2", "summary": "Explicit approval and PyPI trusted-publisher setup required before v0.1.0 publication", "blocking": true}
+    {"id": "D2", "summary": "Register PyPI pending publisher and explicitly approve v0.1.0 publication", "blocking": true}
   ],
   "artifactRefs": [
     {"kind": "plan", "path": ".cg-docs/plans/2026-08-17-pypi-publication-release-readiness.md", "status": "active"},

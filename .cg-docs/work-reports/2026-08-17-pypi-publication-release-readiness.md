@@ -97,7 +97,7 @@ final-status: blocked
 
 ## Final External Blockers
 
-- The repository has no protected `pypi` environment; only `github-pages` is configured.
-- No protected `v*` tag/ruleset was found.
-- `https://pypi.org/pypi/povineq/json` still returns `404`; trusted-publisher registration and project ownership remain pending.
+- The self-service `pypi` environment is configured without reviewer approval and is restricted to the `v*` tag policy.
+- Active repository ruleset `Protect PyPI release tags` protects `v*` creation, updates, and deletion; organization admins can self-service releases.
+- `https://pypi.org/pypi/povineq/json` still returns `404`; PyPI pending-publisher registration remains pending.
 - No release tag was created and no PyPI upload was attempted. Explicit user confirmation remains required immediately before the irreversible release.
