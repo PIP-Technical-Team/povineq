@@ -3,7 +3,7 @@ plan: .cg-docs/plans/2026-08-17-pypi-publication-release-readiness.md
 workflow: /cg-work
 started: 2026-08-17T15:28:44Z
 active-deviation-policy: ask
-final-status: active
+final-status: blocked
 ---
 
 # Execution Report
@@ -77,3 +77,11 @@ final-status: active
 - Local revalidation: `203 passed`; `92.70%` branch coverage; Ruff, mypy, strict MkDocs, lockfile, build, Twine, workflow YAML/security, and artifact manifest checks passed sequentially.
 - Next evidence action: push `chore/publish-pypi` and inspect the resulting GitHub Actions run.
 - PyPI remains intentionally unregistered (`404`) and production publication remains blocked pending ownership/trusted-publisher configuration and explicit confirmation.
+
+### Remote evidence
+
+- Branch push: `f7cc116efffbec1d7f44ff26d1f85220803ce990`
+- GitHub Actions run: [32047088141](https://github.com/PIP-Technical-Team/povineq/actions/runs/32047088141)
+- Result: passed.
+- Jobs passed: Python 3.10, 3.11, 3.12, and 3.13 tests; quality; build/artifacts; docs.
+- Non-blocking annotation: GitHub reports Node.js 20 deprecation notices for existing action major versions.
