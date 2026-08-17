@@ -1,0 +1,85 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  UV_INDEX: https://pypi.org/simple
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: validate release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "0.10.2"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install release tools
+        run: uv sync --group release
+
+      - name: Verify tag matches project version
+        run: |
+          python - <<'PY'
+          import os
+          import tomllib
+          from pathlib import Path
+
+          project_version = tomllib.loads(
+              Path("pyproject.toml").read_text(encoding="utf-8")
+          )["project"]["version"]
+          tag = os.environ["GITHUB_REF_NAME"]
+          if not tag.startswith("v") or tag.removeprefix("v") != project_version:
+              raise SystemExit(
+                  f"Tag {tag!r} does not match project version {project_version!r}"
+              )
+          print(f"Validated release tag {tag} for version {project_version}")
+          PY
+
+      - name: Build distributions
+        run: uv build
+
+      - name: Validate distribution metadata
+        run: uv run twine check dist/*
+
+      - name: Upload validated distributions
+        uses: actions/upload-artifact@v4
+        with:
+          name: povineq-release-dist
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    name: publish to PyPI
+    needs: validate
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/povineq
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Download validated distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: povineq-release-dist
+          path: dist/
+
+      - name: Publish with trusted publishing
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Literal
+from typing import Literal, cast
 
 import pandas as pd
 from loguru import logger
@@ -12,7 +12,7 @@ from povineq._aux_store import call_aux as _call_aux_store
 from povineq._aux_store import set_aux
 from povineq._constants import API_VERSION, ENDPOINT_AUX
 from povineq._request import build_and_execute
-from povineq._response import PIPResponse, parse_response
+from povineq._response import DataFrameLike, PIPResponse, parse_response
 from povineq._validation import AuxParams
 
 
@@ -21,14 +21,14 @@ def get_aux(
     version: str | None = None,
     ppp_version: int | None = None,
     release_version: str | None = None,
-    api_version: str = API_VERSION,
-    fmt: str = "json",
+    api_version: Literal["v1"] = API_VERSION,
+    fmt: Literal["json", "csv"] = "json",
     simplify: bool = True,
     server: str | None = None,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
     assign_tb: bool | str = False,
     replace: bool = False,
-) -> pd.DataFrame | list[str] | PIPResponse | bool:
+) -> DataFrameLike | list[str] | PIPResponse | bool:
     """Fetch an auxiliary dataset from the PIP API.
 
     When no *table* is specified, returns a list of available table names.
@@ -81,7 +81,10 @@ def get_aux(
             query["release_version"] = release_version
 
         response = build_and_execute(ENDPOINT_AUX, query, server=server, api_version=api_version)
-        result = parse_response(response, simplify=simplify, dataframe_type=dataframe_type)
+        result = cast(
+            DataFrameLike | PIPResponse,
+            parse_response(response, simplify=simplify, dataframe_type=dataframe_type),
+        )
 
         if simplify and isinstance(result, pd.DataFrame) and "tables" in result.columns:
             # pd.json_normalize packs {"tables": [...]} into a single-row df;
@@ -98,7 +101,10 @@ def get_aux(
     query.pop("api_version", None)
 
     response = build_and_execute(ENDPOINT_AUX, query, server=server, api_version=api_version)
-    rt = parse_response(response, simplify=simplify, dataframe_type=dataframe_type)
+    rt = cast(
+        DataFrameLike | PIPResponse,
+        parse_response(response, simplify=simplify, dataframe_type=dataframe_type),
+    )
 
     if assign_tb is not False:
         tb_name: str
@@ -124,8 +130,8 @@ def display_aux(
     version: str | None = None,
     ppp_version: int | None = None,
     release_version: str | None = None,
-    api_version: str = API_VERSION,
-    fmt: str = "json",
+    api_version: Literal["v1"] = API_VERSION,
+    fmt: Literal["json", "csv"] = "json",
     simplify: bool = True,
     server: str | None = None,
 ) -> pd.DataFrame | list[str]:
@@ -150,22 +156,25 @@ def display_aux(
         >>> import povineq
         >>> povineq.display_aux()
     """
-    result = get_aux(
-        table=None,
-        version=version,
-        ppp_version=ppp_version,
-        release_version=release_version,
-        api_version=api_version,
-        fmt=fmt,
-        simplify=simplify,
-        server=server,
+    result = cast(
+        pd.DataFrame | list[str],
+        get_aux(
+            table=None,
+            version=version,
+            ppp_version=ppp_version,
+            release_version=release_version,
+            api_version=api_version,
+            fmt=fmt,
+            simplify=simplify,
+            server=server,
+        ),
     )
 
     if isinstance(result, list):
         logger.info("Available auxiliary tables", tables=result)
         return result
 
-    return result  # type: ignore[return-value]
+    return result
 
 
 def call_aux(table: str | None = None) -> pd.DataFrame | list[str]:
@@ -211,22 +220,25 @@ def _make_aux_getter(table_name: str, table_description: str) -> Callable:
         version: str | None = None,
         ppp_version: int | None = None,
         release_version: str | None = None,
-        api_version: str = API_VERSION,
-        fmt: str = "json",
+        api_version: Literal["v1"] = API_VERSION,
+        fmt: Literal["json", "csv"] = "json",
         simplify: bool = True,
         server: str | None = None,
         dataframe_type: Literal["pandas", "polars"] = "pandas",
-    ) -> pd.DataFrame | PIPResponse:
-        return get_aux(
-            table=table_name,
-            version=version,
-            ppp_version=ppp_version,
-            release_version=release_version,
-            api_version=api_version,
-            fmt=fmt,
-            simplify=simplify,
-            server=server,
-            dataframe_type=dataframe_type,
+    ) -> DataFrameLike | PIPResponse:
+        return cast(
+            DataFrameLike | PIPResponse,
+            get_aux(
+                table=table_name,
+                version=version,
+                ppp_version=ppp_version,
+                release_version=release_version,
+                api_version=api_version,
+                fmt=fmt,
+                simplify=simplify,
+                server=server,
+                dataframe_type=dataframe_type,
+            ),
         )
 
     _getter.__name__ = f"get_{table_name}"

@@ -7,4 +7,6 @@ for the full release history.
 
 ## 0.1.0 — (unreleased)
 
-Initial alpha release.
+Initial alpha release of the `povineq` Python wrapper for the World Bank PIP
+API, including poverty statistics, country profiles, auxiliary data, caching,
+and pandas/polars output support. Publication is pending the release gates.

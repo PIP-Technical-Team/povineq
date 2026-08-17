@@ -61,10 +61,10 @@ from povineq.stats import get_agg, get_stats, get_wb
 from povineq.utils import change_grouped_stats_to_csv
 
 try:
-    from importlib.metadata import version
+    from importlib.metadata import PackageNotFoundError, version
 
     __version__ = version("povineq")
-except ImportError:
+except PackageNotFoundError:
     __version__ = "0.1.0"  # fallback when package is not installed (e.g. editable source)
 
 __all__ = [  # noqa: RUF022

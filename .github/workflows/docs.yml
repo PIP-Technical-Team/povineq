@@ -10,6 +10,9 @@ on:
       - "pyproject.toml"
   workflow_dispatch:
 
+env:
+  UV_INDEX: https://pypi.org/simple
+
 concurrency:
   group: deploy-docs
   cancel-in-progress: true
@@ -34,7 +37,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: uv sync --extra docs
+        run: uv sync --group docs
 
       - name: Build docs
         run: uv run mkdocs build --strict

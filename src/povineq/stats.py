@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, cast
 
 import pandas as pd
 from loguru import logger
 
 from povineq._constants import API_VERSION, ENDPOINT_PIP, ENDPOINT_PIP_GRP
 from povineq._request import build_and_execute
-from povineq._response import PIPResponse, parse_response
+from povineq._response import DataFrameLike, PIPResponse, parse_response
 from povineq._validation import AggParams, StatsParams
 
 
@@ -21,17 +21,17 @@ def get_stats(
     fill_gaps: bool = False,
     nowcast: bool = False,
     subgroup: str | None = None,
-    welfare_type: str = "all",
-    reporting_level: str = "all",
+    welfare_type: Literal["all", "income", "consumption"] = "all",
+    reporting_level: Literal["all", "national", "urban", "rural"] = "all",
     version: str | None = None,
     ppp_version: int | None = None,
     release_version: str | None = None,
-    api_version: str = API_VERSION,
-    fmt: str = "arrow",
+    api_version: Literal["v1"] = API_VERSION,
+    fmt: Literal["arrow", "json", "csv"] = "arrow",
     simplify: bool = True,
     server: str | None = None,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
+) -> DataFrameLike | PIPResponse:
     """Get poverty and inequality statistics from the PIP API.
 
     This is the primary function for querying household survey-based poverty
@@ -126,7 +126,10 @@ def get_stats(
 
     response = build_and_execute(endpoint, query, server=server, api_version=api_version)
 
-    out = parse_response(response, simplify=simplify, dataframe_type=dataframe_type)
+    out = cast(
+        DataFrameLike | PIPResponse,
+        parse_response(response, simplify=simplify, dataframe_type=dataframe_type),
+    )
 
     # When fill_gaps=False (and simplify=True) filter out nowcast rows
     # pipr does this because estimate_type is only returned when fill_gaps=True
@@ -143,12 +146,12 @@ def get_wb(
     version: str | None = None,
     ppp_version: int | None = None,
     release_version: str | None = None,
-    api_version: str = API_VERSION,
-    fmt: str = "json",
+    api_version: Literal["v1"] = API_VERSION,
+    fmt: Literal["json", "csv"] = "json",
     simplify: bool = True,
     server: str | None = None,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
+) -> DataFrameLike | PIPResponse:
     """Get World Bank regional and global aggregate statistics.
 
     Shorthand for ``get_stats(subgroup="wb_regions")``.
@@ -193,7 +196,10 @@ def get_wb(
     response = build_and_execute(
         ENDPOINT_PIP_GRP, query, server=server, api_version=api_version
     )
-    return parse_response(response, simplify=simplify, dataframe_type=dataframe_type)
+    return cast(
+        DataFrameLike | PIPResponse,
+        parse_response(response, simplify=simplify, dataframe_type=dataframe_type),
+    )
 
 
 def get_agg(
@@ -203,12 +209,12 @@ def get_agg(
     ppp_version: int | None = None,
     release_version: str | None = None,
     aggregate: str | None = None,
-    api_version: str = API_VERSION,
-    fmt: str = "json",
+    api_version: Literal["v1"] = API_VERSION,
+    fmt: Literal["json", "csv"] = "json",
     simplify: bool = True,
     server: str | None = None,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
+) -> DataFrameLike | PIPResponse:
     """Get custom aggregate statistics (FCV, regional, vintage, etc.).
 
     Mirrors ``pipr::get_agg()``.
@@ -250,4 +256,7 @@ def get_agg(
     response = build_and_execute(
         ENDPOINT_PIP_GRP, query, server=server, api_version=api_version
     )
-    return parse_response(response, simplify=simplify, dataframe_type=dataframe_type)
+    return cast(
+        DataFrameLike | PIPResponse,
+        parse_response(response, simplify=simplify, dataframe_type=dataframe_type),
+    )

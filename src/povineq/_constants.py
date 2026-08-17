@@ -1,9 +1,11 @@
 """Constants for the povineq package — base URLs, endpoints, and defaults."""
 
+from typing import Literal
+
 # API
 PROD_URL: str = "https://api.worldbank.org/pip"
 USER_AGENT: str = "povineq (https://github.com/PIP-Technical-Team/povineq)"
-API_VERSION: str = "v1"
+API_VERSION: Literal["v1"] = "v1"
 
 # Endpoints
 ENDPOINT_PIP: str = "pip"
@@ -25,8 +27,8 @@ DEFAULT_YEAR: str = "all"
 DEFAULT_POVLINE_CP: float = 2.15
 DEFAULT_POVLINE_CP_2011: float = 1.9
 DEFAULT_PPP_VERSION: int = 2017
-DEFAULT_FORMAT: str = "arrow"
-DEFAULT_FORMAT_AUX: str = "json"  # aux endpoint does not support arrow
+DEFAULT_FORMAT: Literal["arrow"] = "arrow"
+DEFAULT_FORMAT_AUX: Literal["json"] = "json"  # aux endpoint does not support arrow
 
 # Column rename mapping.
 # The PIP API returns columns under names that differ from the pipr R package

@@ -7,25 +7,32 @@ and understanding the result.
 
 ## Requirements
 
-- Python 3.10 or newer
+- Python 3.10 through 3.13
 - An internet connection for live API calls (cached responses work offline)
 
 ---
 
 ## Installation
 
-!!! warning "Not available on PyPI"
-    `povineq` is under active development and has **not been released to PyPI yet**.
-    Install directly from GitHub:
+!!! note "First release pending"
+    The first PyPI release is being prepared. Once published, install the
+    package from PyPI:
 
-```bash
-pip install git+https://github.com/PIP-Technical-Team/povineq.git
-```
+    ```bash
+    pip install povineq
+    ```
 
 For [polars](https://pola.rs/) support alongside the default pandas output:
 
 ```bash
-pip install "povineq[polars] @ git+https://github.com/PIP-Technical-Team/povineq.git"
+pip install "povineq[polars]"
+```
+
+Until the first PyPI release is available, install the development version
+directly from GitHub:
+
+```bash
+pip install git+https://github.com/PIP-Technical-Team/povineq.git
 ```
 
 ---

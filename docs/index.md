@@ -30,19 +30,31 @@ the same parameter conventions, the same return shapes.
 
 ## Installation
 
-!!! warning "Not available on PyPI"
-    `povineq` is under active development and has **not been released to PyPI yet**.
-    Install directly from GitHub:
+!!! note "First release pending"
+    The first PyPI release is being prepared. Once published, install the
+    package from PyPI:
+
+    ```bash
+    pip install povineq
+    ```
+
+For optional [polars](https://pola.rs/) support:
+
+```bash
+pip install "povineq[polars]"
+```
+
+The package supports Python 3.10 through 3.13. Until the first PyPI release is
+available, install the development version from GitHub:
 
 ```bash
 pip install git+https://github.com/PIP-Technical-Team/povineq.git
 ```
 
-For optional [polars](https://pola.rs/) support:
-
-```bash
-pip install "povineq[polars] @ git+https://github.com/PIP-Technical-Team/povineq.git"
-```
+Releases are validated and published by `.github/workflows/publish.yml` using
+PyPI trusted publishing. Register owner `PIP-Technical-Team`, repository
+`povineq`, workflow `publish.yml`, and environment `pypi` as the trusted
+publisher; no credentials belong in the documentation or repository.
 
 ---
 
