@@ -28,6 +28,9 @@ Usage::
 
 from __future__ import annotations
 
+import re
+from pathlib import Path
+
 from povineq._cache import delete_cache, get_cache_info
 from povineq._errors import (
     PIPAPIError,
@@ -65,7 +68,17 @@ try:
 
     __version__ = version("povineq")
 except PackageNotFoundError:
-    __version__ = "0.1.0"  # fallback when package is not installed (e.g. editable source)
+    _project_file = Path(__file__).resolve().parents[2] / "pyproject.toml"
+    _version_match = (
+        re.search(
+            r'^version\s*=\s*["\']([^"\']+)["\']',
+            _project_file.read_text(encoding="utf-8"),
+            flags=re.MULTILINE,
+        )
+        if _project_file.is_file()
+        else None
+    )
+    __version__ = _version_match.group(1) if _version_match else "0+unknown"
 
 __all__ = [  # noqa: RUF022
     # Version

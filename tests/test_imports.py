@@ -17,10 +17,11 @@ def test_version_accessible():
 
 def test_version_falls_back_when_distribution_metadata_is_missing():
     with patch("importlib.metadata.version", side_effect=PackageNotFoundError):
-        reloaded = importlib.reload(povineq)
-
-    assert reloaded.__version__ == "0.1.0"
-    importlib.reload(povineq)
+        try:
+            reloaded = importlib.reload(povineq)
+            assert reloaded.__version__ == "0.1.0"
+        finally:
+            importlib.reload(povineq)
 
 
 def test_all_public_functions_importable():

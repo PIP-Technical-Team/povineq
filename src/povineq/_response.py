@@ -5,7 +5,7 @@ from __future__ import annotations
 import io
 import json
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Literal, TypeAlias, cast
+from typing import Any, Literal, Protocol, TypeAlias, cast
 
 import httpx
 import pandas as pd
@@ -17,14 +17,19 @@ from povineq._constants import COLUMN_RENAMES
 from povineq._errors import PIPError
 from povineq.utils import change_grouped_stats_to_csv, rename_cols
 
-if TYPE_CHECKING:
-    import polars as pl
 
-    DataFrameLike: TypeAlias = pd.DataFrame | pl.DataFrame
-else:
-    # Polars is an optional runtime dependency; the alias is only evaluated by
-    # type checkers when its stubs are installed in the dev environment.
-    DataFrameLike: TypeAlias = Any
+class PolarsDataFrame(Protocol):
+    """Structural type for the optional Polars DataFrame output."""
+
+    @property
+    def columns(self) -> list[str]: ...
+
+    def get_column(self, name: str) -> Any: ...
+
+    def to_pandas(self) -> pd.DataFrame: ...
+
+
+DataFrameLike: TypeAlias = pd.DataFrame | PolarsDataFrame
 
 
 @dataclass
@@ -145,7 +150,11 @@ def _to_target_type(
 
     Raises:
         ImportError: If polars is requested but not installed.
+        ValueError: If *dataframe_type* is unsupported.
     """
+    if dataframe_type not in ("pandas", "polars"):
+        raise ValueError("dataframe_type must be 'pandas' or 'polars'")
+
     if dataframe_type == "polars":
         try:
             import polars as pl

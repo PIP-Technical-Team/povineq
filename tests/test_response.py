@@ -204,6 +204,12 @@ class TestToTargetType:
         result = _to_target_type(df, "pandas")
         assert isinstance(result, pd.DataFrame)
 
+    def test_invalid_dataframe_type_raises(self):
+        from povineq._response import _to_target_type
+
+        with pytest.raises(ValueError, match="dataframe_type"):
+            _to_target_type(pd.DataFrame({"a": [1]}), "invalid")
+
 
 class TestApplyPostProcessing:
     """Direct tests for _apply_post_processing() helper."""

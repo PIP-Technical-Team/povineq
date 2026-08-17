@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, cast
 
 from pydantic import BaseModel, field_validator, model_validator
 
 from povineq._constants import (
+    API_VERSION,
     DEFAULT_COUNTRY,
     DEFAULT_FORMAT,
     DEFAULT_FORMAT_AUX,
@@ -15,6 +16,13 @@ from povineq._constants import (
     DEFAULT_PPP_VERSION,
     DEFAULT_YEAR,
 )
+
+
+def validate_api_version(value: str) -> Literal["v1"]:
+    """Validate the API version accepted by the public endpoints."""
+    if value != API_VERSION:
+        raise ValueError(f"api_version must be {API_VERSION!r}, got {value!r}")
+    return cast(Literal["v1"], value)
 
 
 class _BaseParams(BaseModel):
@@ -133,6 +141,18 @@ class CpParams(_BaseParams):
         if self.povline is None and self.ppp_version == 2011:
             self.povline = DEFAULT_POVLINE_CP_2011
         return self
+
+
+class WbParams(_BaseParams):
+    """Parameters for :func:`~povineq.stats.get_wb`."""
+
+    year: str | int | list[int] = DEFAULT_YEAR
+    povline: float | None = None
+    version: str | None = None
+    ppp_version: int | None = None
+    release_version: str | None = None
+    api_version: Literal["v1"] = "v1"
+    format: Literal["json", "csv"] = "json"
 
 
 class CpKiParams(_BaseParams):

@@ -13,11 +13,12 @@ pip install povineq
 pip install "povineq[polars]"
 ```
 
-The package supports Python 3.10 through 3.13. Until the first PyPI release is
-available, install the development version directly from GitHub:
+The package supports Python 3.10 through 3.13. For unreleased development
+versions, install directly from GitHub:
 
 ```bash
 pip install git+https://github.com/PIP-Technical-Team/povineq.git
+pip install "povineq[polars] @ git+https://github.com/PIP-Technical-Team/povineq.git"
 ```
 
 ## Quick Start
@@ -61,28 +62,33 @@ print(povineq.get_versions())
 | `get_countries()`, `get_regions()`, … | Per-table convenience wrappers |
 | `check_api()` | API health check |
 | `get_versions()` | Available data versions |
-| `delete_cache()` | Clear the HTTP response cache |
+| `delete_cache()` | Clear the local cache directory |
 
 ## Development
 
 ```bash
 git clone https://github.com/PIP-Technical-Team/povineq
 cd povineq
-uv sync --group dev
-uv run pytest -m "not online"
+env -u UV_INDEX -u UV_INDEX_URL -u UV_EXTRA_INDEX_URL UV_DEFAULT_INDEX=https://pypi.org/simple uv sync --locked --group dev
+env -u UV_INDEX -u UV_INDEX_URL -u UV_EXTRA_INDEX_URL UV_DEFAULT_INDEX=https://pypi.org/simple uv run --locked pytest -m "not online"
 ```
 
 Documentation and release tooling are uv dependency groups, not published
-package extras. Use `uv sync --group docs` for documentation and
-`uv sync --group release` for artifact validation.
+package extras. Use the locked public-PyPI commands below:
+
+```bash
+env -u UV_INDEX -u UV_INDEX_URL -u UV_EXTRA_INDEX_URL UV_DEFAULT_INDEX=https://pypi.org/simple uv sync --locked --no-default-groups --group docs
+env -u UV_INDEX -u UV_INDEX_URL -u UV_EXTRA_INDEX_URL UV_DEFAULT_INDEX=https://pypi.org/simple uv sync --locked --no-default-groups --group release
+```
 
 ## Release Process
 
 Releases are tag-gated by `.github/workflows/publish.yml`. The validation job
 requires the `vX.Y.Z` tag to match the version in `pyproject.toml`, builds and
 checks the artifacts, and passes only those artifacts to the publish job.
-Publishing uses PyPI trusted publishing through the protected GitHub environment
-`pypi`; no PyPI token is stored in the repository.
+Publishing is intended to use PyPI trusted publishing through a protected
+GitHub environment named `pypi`; that environment and the PyPI registration
+must be configured before a release. No PyPI token is stored in the repository.
 
 The PyPI trusted publisher must be registered with owner `PIP-Technical-Team`,
 repository `povineq`, workflow `publish.yml`, and environment `pypi`.

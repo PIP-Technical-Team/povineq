@@ -8,15 +8,14 @@ and understanding the result.
 ## Requirements
 
 - Python 3.10 through 3.13
-- An internet connection for live API calls (cached responses work offline)
+- An internet connection for live API calls
 
 ---
 
 ## Installation
 
-!!! note "First release pending"
-    The first PyPI release is being prepared. Once published, install the
-    package from PyPI:
+!!! note "Published releases"
+    Install the package from PyPI when using a published release:
 
     ```bash
     pip install povineq
@@ -28,11 +27,11 @@ For [polars](https://pola.rs/) support alongside the default pandas output:
 pip install "povineq[polars]"
 ```
 
-Until the first PyPI release is available, install the development version
-directly from GitHub:
+For unreleased development versions, install directly from GitHub:
 
 ```bash
 pip install git+https://github.com/PIP-Technical-Team/povineq.git
+pip install "povineq[polars] @ git+https://github.com/PIP-Technical-Team/povineq.git"
 ```
 
 ---
@@ -104,9 +103,9 @@ response, headers, and raw body alongside the parsed data:
 import povineq
 
 resp = povineq.get_stats(country="AGO", year=2000, simplify=False)
-print(resp.status_code)
-print(resp.elapsed)
-df = resp.to_dataframe()
+print(resp.status)
+print(resp.response.elapsed)
+df = resp.content
 ```
 
 ---
@@ -136,7 +135,7 @@ try:
 except PIPValidationError as e:
     print("Bad parameters:", e)
 except PIPAPIError as e:
-    print("API error:", e.status_code, e.message)
+    print("API error:", e.status_code, e.error_message)
 except PIPConnectionError:
     print("Could not reach the PIP API")
 ```

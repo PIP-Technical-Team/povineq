@@ -6,6 +6,7 @@ import json
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
+import pytest
 
 from povineq.info import check_api, get_pip_info, get_versions
 
@@ -41,6 +42,10 @@ class TestCheckApi:
             check_api()
 
         assert calls[0] == ENDPOINT_HEALTH_CHECK
+
+    def test_invalid_api_version_is_rejected(self):
+        with pytest.raises(ValueError):
+            check_api(api_version="v2")
 
 
 class TestGetVersions:

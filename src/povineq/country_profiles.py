@@ -14,7 +14,7 @@ from povineq._constants import (
     ENDPOINT_CP_KEY_INDICATORS,
 )
 from povineq._request import build_and_execute
-from povineq._response import DataFrameLike, PIPResponse, parse_response
+from povineq._response import DataFrameLike, PIPResponse, _to_target_type, parse_response
 from povineq._validation import CpKiParams, CpParams
 
 
@@ -145,7 +145,7 @@ def get_cp_ki(
     # parse_response (simplify=False) wraps it in a PIPResponse.
     if simplify:
         raw = json.loads(response.text)
-        return unnest_ki(raw)
+        return cast(DataFrameLike, _to_target_type(unnest_ki(raw), dataframe_type))
 
     return cast(
         DataFrameLike | PIPResponse,

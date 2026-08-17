@@ -140,6 +140,27 @@ class TestGetCpKi:
 
         assert calls[0] == ENDPOINT_CP_KEY_INDICATORS
 
+    def test_polars_output_is_honored(self):
+        pl = pytest.importorskip("polars")
+        ki_data = {
+            "headcount": [{"country_code": "IDN", "reporting_year": 2019, "headcount": 0.1}],
+            "headcount_national": [],
+            "mpm_headcount": [],
+            "pop": [],
+            "gni": [],
+            "gdp_growth": [],
+            "shared_prosperity": [],
+        }
+        resp = _mock_resp(
+            json.dumps(ki_data).encode(),
+            "application/json",
+            url="https://api.worldbank.org/pip/v1/cp-key-indicators",
+        )
+        with patch("povineq.country_profiles.build_and_execute", return_value=resp):
+            result = get_cp_ki(country="IDN", dataframe_type="polars")
+
+        assert isinstance(result, pl.DataFrame)
+
 
 class TestUnnestKi:
     def test_basic_unnest(self):

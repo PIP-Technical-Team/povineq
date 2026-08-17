@@ -19,8 +19,8 @@ the same parameter conventions, the same return shapes.
   summaries via `get_cp()` and `get_cp_ki()`.
 - **Auxiliary data** — GDP, CPI, PPP, population, survey metadata, and coverage
   tables via `get_aux()` and its per-table convenience wrappers.
-- **Auto-caching** — HTTP responses are cached locally so repeated calls are
-  instant. Manage the cache with `delete_cache()` and `get_cache_info()`.
+- **Connection pooling and retries** — HTTP requests reuse connections and retry
+  transient transport failures. Cache-directory helpers are available separately.
 - **pandas *or* polars** — every function that returns a DataFrame accepts a
   `dataframe_type` argument so you can work with either library.
 - **Typed errors** — `PIPError`, `PIPAPIError`, `PIPRateLimitError`, and
@@ -30,9 +30,8 @@ the same parameter conventions, the same return shapes.
 
 ## Installation
 
-!!! note "First release pending"
-    The first PyPI release is being prepared. Once published, install the
-    package from PyPI:
+!!! note "Published releases"
+    Install the package from PyPI when using a published release:
 
     ```bash
     pip install povineq
@@ -44,17 +43,20 @@ For optional [polars](https://pola.rs/) support:
 pip install "povineq[polars]"
 ```
 
-The package supports Python 3.10 through 3.13. Until the first PyPI release is
-available, install the development version from GitHub:
+The package supports Python 3.10 through 3.13. For unreleased development
+versions, install from GitHub:
 
 ```bash
 pip install git+https://github.com/PIP-Technical-Team/povineq.git
+pip install "povineq[polars] @ git+https://github.com/PIP-Technical-Team/povineq.git"
 ```
 
-Releases are validated and published by `.github/workflows/publish.yml` using
-PyPI trusted publishing. Register owner `PIP-Technical-Team`, repository
-`povineq`, workflow `publish.yml`, and environment `pypi` as the trusted
-publisher; no credentials belong in the documentation or repository.
+Releases are intended to be validated and published by
+`.github/workflows/publish.yml` using PyPI trusted publishing. Before the first
+release, configure the protected `pypi` environment and register owner
+`PIP-Technical-Team`, repository `povineq`, workflow `publish.yml`, and
+environment `pypi` as the trusted publisher. No credentials belong in the
+documentation or repository.
 
 ---
 

@@ -129,6 +129,28 @@ class TestGetStats:
         # nowcast row should be filtered
         assert all("nowcast" not in str(v) for v in df["estimate_type"])
 
+    def test_nowcast_filter_preserves_polars_output(self):
+        pl = pytest.importorskip("polars")
+        records = [
+            {"country_code": "AGO", "reporting_year": 2000, "headcount": 0.5, "estimate_type": "survey"},
+            {"country_code": "AGO", "reporting_year": 2023, "headcount": 0.3, "estimate_type": "nowcast"},
+        ]
+        resp = _mock_response(json.dumps(records).encode(), "application/json")
+        with patch("povineq.stats.build_and_execute", return_value=resp):
+            result = get_stats(
+                fill_gaps=True,
+                nowcast=False,
+                dataframe_type="polars",
+            )
+
+        assert isinstance(result, pl.DataFrame)
+        assert result["estimate_type"].to_list() == ["survey"]
+
+    def test_invalid_wb_format_is_rejected(self, wb_json_response):
+        with patch("povineq.stats.build_and_execute", return_value=wb_json_response):
+            with pytest.raises(ValueError):
+                get_wb(fmt="rds")
+
 
 class TestGetWb:
     def test_basic(self, wb_json_response):
