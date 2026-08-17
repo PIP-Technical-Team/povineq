@@ -1,6 +1,6 @@
 # 🧠 Project Brain — Chronological Log
 
-_Generated 2026-08-17 · 16 artifacts (newest first) + 14 roadmap features_
+_Generated 2026-08-17 · 19 artifacts (newest first) + 14 roadmap features_
 
 ## undated
 
@@ -15,11 +15,17 @@ _Generated 2026-08-17 · 16 artifacts (newest first) + 14 roadmap features_
 
 ## 2026-08-17
 
+- **[2026-08-17-pypi-publication-release-readiness-review](.cg-docs/reviews/2026-08-17-pypi-publication-release-readiness-review.md)** · `review` · _—_ · `2026-08-17`
+  > **Review mode**: full **Scope**: `main...chore/publish-pypi` **Review fallback**: legacy prior review files had no tr…
+- **[2026-08-17-pypi-publication-review](.cg-docs/reviews/2026-08-17-pypi-publication-review.md)** · `review` · _—_ · `2026-08-17`
+  > **Review mode**: light **Scope**: post-merge main commits `0fd3a03` + `4abbf22` (v0.1.0 publication docs finalization…
+- **[Fix mkdocs gh-deploy refusal when the generated gh-pages branch has advanced](.cg-docs/solutions/git-workflows/2026-08-17-mkdocs-gh-pages-advanced-force.md)** · `solution` · _—_ · `2026-08-17`
+  > The docs deployment step `uv run --locked mkdocs gh-deploy` failed in CI with an error indicating that the generated …
 - **[Harden Python package release gates with locked CI and OIDC publication](.cg-docs/solutions/git-workflows/2026-08-17-pypi-release-gates-and-oidc.md)** · `solution` · _—_ · `2026-08-17`
   > The package could pass local tests and metadata checks while CI omitted runtime Polars coverage, the lockfile was not…
 - **[Publish povineq to PyPI](.cg-docs/plans/2026-08-17-pypi-publication.md)** · `plan` · _active_ · `2026-08-17`
   > Publish the first stable `povineq` distribution to PyPI using a repeatable, secure release process. The release must …
-- **[Publish povineq to PyPI with release-readiness gates](.cg-docs/plans/2026-08-17-pypi-publication-release-readiness.md)** · `plan` · _active_ · `2026-08-17`
+- **[Publish povineq to PyPI with release-readiness gates](.cg-docs/plans/2026-08-17-pypi-publication-release-readiness.md)** · `plan` · _completed_ · `2026-08-17`
   > Publish the first stable `povineq` distribution to PyPI through a repeatable, credential-safe release process. The pa…
 
 ## 2026-04-01
@@ -70,7 +76,7 @@ _Generated 2026-08-17 · 16 artifacts (newest first) + 14 roadmap features_
   > get_gd — grouped data from user-supplied distributions
 - **[Package scaffolding](roadmap.json#package-scaffolding)** · `feature` · _done_ · `—`
   > Package scaffolding
-- **[PyPI publishing and CI/CD](roadmap.json#pypi-publishing-and-ci-cd)** · `feature` · _active_ · `—`
+- **[PyPI publishing and CI/CD](roadmap.json#pypi-publishing-and-ci-cd)** · `feature` · _done_ · `—`
   > PyPI publishing and CI/CD
 - **[Tests \(pytest suite mirroring pipr test suite\)](roadmap.json#tests)** · `feature` · _done_ · `—`
   > Tests (pytest suite mirroring pipr test suite)

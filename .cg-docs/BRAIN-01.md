@@ -2,6 +2,27 @@
 
 _Generated 2026-08-17_
 
+## Gen_Ref_Pages.Py / Mkdocs.Yml / --Force
+
+_Keywords: `gen_ref_pages.py` · `mkdocs.yml` · `--force`_ · 8 entities
+
+- **[Documentation website for povineq](.cg-docs/brainstorms/2026-04-01-documentation-website.md)** · `brainstorm` · _decided_ · `2026-04-01`
+  > The `povineq` package needs a documentation website similar to what `pkgdown` provides for R packages (e.g., [pipr](h…
+- **[Documentation website with MkDocs + Material](.cg-docs/plans/2026-04-01-documentation-website.md)** · `plan` · _active_ · `2026-04-01`
+  > Build and deploy a documentation website for `povineq` at `pip-technical-team.github.io/povineq/` using MkDocs + Mate…
+- **[2026-04-01-documentation-website-light-review](.cg-docs/reviews/2026-04-01-documentation-website-light-review.md)** · `review` · _—_ · `—`
+  > **Review depth**: light **Files reviewed**: 7 (`.github/workflows/ci.yml`, `.github/workflows/docs.yml`, `.gitignore`…
+- **[2026-04-01-documentation-website-review](.cg-docs/reviews/2026-04-01-documentation-website-review.md)** · `review` · _—_ · `—`
+  > **Review depth**: thorough **Files reviewed**: 8 (`.gitignore`, `pyproject.toml`, `roadmap.json`, `uv.lock`, `.github…
+- **[2026-08-17-pypi-publication-review](.cg-docs/reviews/2026-08-17-pypi-publication-review.md)** · `review` · _—_ · `2026-08-17`
+  > **Review mode**: light **Scope**: post-merge main commits `0fd3a03` + `4abbf22` (v0.1.0 publication docs finalization…
+- **[PEP 735 \[dependency-groups\] is uv-only; pip silently ignores them](.cg-docs/solutions/build-errors/2026-04-01-pep735-dependency-groups-pip-incompatible.md)** · `solution` · _—_ · `2026-04-01`
+  > Defining dev or docs dependencies under `[dependency-groups]` in `pyproject.toml` (PEP 735 syntax) works perfectly wi…
+- **[Production-ready MkDocs + GitHub Pages + uv CI/CD workflow](.cg-docs/solutions/git-workflows/2026-04-01-mkdocs-github-pages-uv-production-pattern.md)** · `solution` · _—_ · `2026-04-01`
+  > A minimal `mkdocs gh-deploy` workflow works locally but has several reliability problems in CI: 1. **Race condition**…
+- **[Fix mkdocs gh-deploy refusal when the generated gh-pages branch has advanced](.cg-docs/solutions/git-workflows/2026-08-17-mkdocs-gh-pages-advanced-force.md)** · `solution` · _—_ · `2026-08-17`
+  > The docs deployment step `uv run --locked mkdocs gh-deploy` failed in CI with an error indicating that the generated …
+
 ## Functions / Core / Wrapper
 
 _Keywords: `functions` · `core` · `wrapper`_ · 6 entities
@@ -18,23 +39,6 @@ _Keywords: `functions` · `core` · `wrapper`_ · 6 entities
   > Utility functions (check_api, get_versions, get_pip_info, cache helpers)
 - **[CLI \(thin wrapper around core functions\)](roadmap.json#cli)** · `feature` · _idea_ · `—`
   > CLI (thin wrapper around core functions)
-
-## Gen_Ref_Pages.Py / Mkdocs.Yml / .Gitignore
-
-_Keywords: `gen_ref_pages.py` · `mkdocs.yml` · `.gitignore`_ · 6 entities
-
-- **[Documentation website for povineq](.cg-docs/brainstorms/2026-04-01-documentation-website.md)** · `brainstorm` · _decided_ · `2026-04-01`
-  > The `povineq` package needs a documentation website similar to what `pkgdown` provides for R packages (e.g., [pipr](h…
-- **[Documentation website with MkDocs + Material](.cg-docs/plans/2026-04-01-documentation-website.md)** · `plan` · _active_ · `2026-04-01`
-  > Build and deploy a documentation website for `povineq` at `pip-technical-team.github.io/povineq/` using MkDocs + Mate…
-- **[2026-04-01-documentation-website-light-review](.cg-docs/reviews/2026-04-01-documentation-website-light-review.md)** · `review` · _—_ · `—`
-  > **Review depth**: light **Files reviewed**: 7 (`.github/workflows/ci.yml`, `.github/workflows/docs.yml`, `.gitignore`…
-- **[2026-04-01-documentation-website-review](.cg-docs/reviews/2026-04-01-documentation-website-review.md)** · `review` · _—_ · `—`
-  > **Review depth**: thorough **Files reviewed**: 8 (`.gitignore`, `pyproject.toml`, `roadmap.json`, `uv.lock`, `.github…
-- **[PEP 735 \[dependency-groups\] is uv-only; pip silently ignores them](.cg-docs/solutions/build-errors/2026-04-01-pep735-dependency-groups-pip-incompatible.md)** · `solution` · _—_ · `2026-04-01`
-  > Defining dev or docs dependencies under `[dependency-groups]` in `pyproject.toml` (PEP 735 syntax) works perfectly wi…
-- **[Production-ready MkDocs + GitHub Pages + uv CI/CD workflow](.cg-docs/solutions/git-workflows/2026-04-01-mkdocs-github-pages-uv-production-pattern.md)** · `solution` · _—_ · `2026-04-01`
-  > A minimal `mkdocs gh-deploy` workflow works locally but has several reliability problems in CI: 1. **Race condition**…
 
 ## Hishel / Inplace=True / Loguru
 

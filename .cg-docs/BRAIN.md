@@ -1,6 +1,6 @@
 # 🧠 Project Brain
 
-_Generated 2026-08-17 · 30 entities · 4 topics · 5 edges_
+_Generated 2026-08-17 · 33 entities · 4 topics · 7 edges_
 
 ## How to Use
 
@@ -13,8 +13,8 @@ _Generated 2026-08-17 · 30 entities · 4 topics · 5 edges_
 
 | # | Topic | Entities | File |
 |---|-------|----------|------|
-| 1 | [Functions / Core / Wrapper](BRAIN-01.md#functions-core-wrapper) | 6 | BRAIN-01.md |
-| 2 | [Gen_Ref_Pages.Py / Mkdocs.Yml / .Gitignore](BRAIN-01.md#gen-ref-pages-py-mkdocs-yml-gitignore) | 6 | BRAIN-01.md |
+| 1 | [Gen_Ref_Pages.Py / Mkdocs.Yml / --Force](BRAIN-01.md#gen-ref-pages-py-mkdocs-yml---force) | 8 | BRAIN-01.md |
+| 2 | [Functions / Core / Wrapper](BRAIN-01.md#functions-core-wrapper) | 6 | BRAIN-01.md |
 | 3 | [Hishel / Inplace=True / Loguru](BRAIN-01.md#hishel-inplace-true-loguru) | 3 | BRAIN-01.md |
 | 4 | [Pipr / _Request.Py / Utils.Py](BRAIN-01.md#pipr-request-py-utils-py) | 3 | BRAIN-01.md |
 
@@ -25,10 +25,10 @@ _Generated 2026-08-17 · 30 entities · 4 topics · 5 edges_
 | brainstorm | 2 |
 | feature | 14 |
 | plan | 4 |
-| review | 4 |
-| solution | 6 |
+| review | 6 |
+| solution | 7 |
 
-_12 entities not assigned to any topic_
+_13 entities not assigned to any topic_
 
 ## Relationship Summary
 
@@ -36,3 +36,4 @@ _12 entities not assigned to any topic_
 |-----------|-------|
 | decided_from | 4 |
 | references | 1 |
+| reviews | 2 |

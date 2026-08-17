@@ -144,6 +144,7 @@ docs = [
 
 ## Related
 
+- `2026-08-17-mkdocs-gh-pages-advanced-force.md` — the specific `gh-deploy` non-fast-forward failure ("generated gh-pages branch had advanced") and when `--force` is safe.
 - `build-errors/2026-04-01-pep735-dependency-groups-pip-incompatible.md` — why dev/docs should be in `[dependency-groups]`, not `[project.optional-dependencies]`
 - MkDocs deployment docs: https://www.mkdocs.org/user-guide/deploying-your-docs/
 - astral-sh/setup-uv: https://github.com/astral-sh/setup-uv

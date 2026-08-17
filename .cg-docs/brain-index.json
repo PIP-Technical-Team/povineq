@@ -1,5 +1,5 @@
 {
-  "edge_count": 5,
+  "edge_count": 7,
   "edges": [
     {
       "edge_type": "decided_from",
@@ -23,6 +23,18 @@
       "edge_type": "decided_from",
       "source": ".cg-docs/plans/2026-08-17-pypi-publication.md",
       "target": ".cg-docs/brainstorms/2026-03-31-povineq-architecture-and-stack.md",
+      "target_missing": false
+    },
+    {
+      "edge_type": "reviews",
+      "source": ".cg-docs/reviews/2026-08-17-pypi-publication-release-readiness-review.md",
+      "target": ".cg-docs/plans/2026-08-17-pypi-publication-release-readiness.md",
+      "target_missing": false
+    },
+    {
+      "edge_type": "reviews",
+      "source": ".cg-docs/reviews/2026-08-17-pypi-publication-review.md",
+      "target": ".cg-docs/plans/2026-08-17-pypi-publication.md",
       "target_missing": false
     },
     {
@@ -151,7 +163,7 @@
       "entity_type": "plan",
       "path": ".cg-docs/plans/2026-08-17-pypi-publication-release-readiness.md",
       "slug": "2026-08-17-pypi-publication-release-readiness",
-      "status": "active",
+      "status": "completed",
       "summary": "Publish the first stable `povineq` distribution to PyPI through a repeatable, credential-safe release process. The package must pass quality gates, install from its built artifacts, and publish only an exact version-tagged distribution through GitHub OIDC trusted publishing.",
       "tags": [
         "python",
@@ -294,6 +306,50 @@
       ]
     },
     {
+      "date": "2026-08-17",
+      "entity_type": "review",
+      "path": ".cg-docs/reviews/2026-08-17-pypi-publication-release-readiness-review.md",
+      "slug": "2026-08-17-pypi-publication-release-readiness-review",
+      "status": "",
+      "summary": "**Review mode**: full **Scope**: `main...chore/publish-pypi` **Review fallback**: legacy prior review files had no tracked `findings:` map, so no P2/P3 suppression was applied.",
+      "tags": [],
+      "title": "2026-08-17-pypi-publication-release-readiness-review",
+      "top_keywords": [
+        "pypi",
+        "publish.yml",
+        "review",
+        "povineq",
+        "resolved",
+        "v*",
+        "release",
+        "pip-technical-team",
+        "validation",
+        "readiness"
+      ]
+    },
+    {
+      "date": "2026-08-17",
+      "entity_type": "review",
+      "path": ".cg-docs/reviews/2026-08-17-pypi-publication-review.md",
+      "slug": "2026-08-17-pypi-publication-review",
+      "status": "",
+      "summary": "**Review mode**: light **Scope**: post-merge main commits `0fd3a03` + `4abbf22` (v0.1.0 publication docs finalization) **Files reviewed**: 10 (`.github/workflows/docs.yml`, `README.md`, `docs/changelog.md`, `docs/getting-started.md`, `docs/index.md`, `roadmap.json`, plus `.cg-docs/` bookkeeping artifacts) **Findings**: 6 (P0: 0, P1: 0, P2: 1, P3: 5)",
+      "tags": [],
+      "title": "2026-08-17-pypi-publication-review",
+      "top_keywords": [
+        "[advisory]",
+        "--force",
+        "readme.md",
+        "current.json",
+        "completed",
+        "docs.yml",
+        "roadmap.json",
+        "gh-pages",
+        "docs/getting-started.md",
+        "docs/index.md"
+      ]
+    },
+    {
       "date": "2026-04-01",
       "entity_type": "solution",
       "path": ".cg-docs/solutions/bugs/2026-04-01-pandas-inplace-returns-none.md",
@@ -402,13 +458,44 @@
         "github",
         "mkdocs",
         "mkdocs-gen-files",
+        "--force",
         "workflow",
         "ci.yml",
         "dev",
+        "gh-deploy",
         "test",
-        "yml",
-        "workflows",
-        "extras"
+        "yml"
+      ]
+    },
+    {
+      "date": "2026-08-17",
+      "entity_type": "solution",
+      "path": ".cg-docs/solutions/git-workflows/2026-08-17-mkdocs-gh-pages-advanced-force.md",
+      "slug": "2026-08-17-mkdocs-gh-pages-advanced-force",
+      "status": "",
+      "summary": "The docs deployment step `uv run --locked mkdocs gh-deploy` failed in CI with an error indicating that the generated `gh-pages` branch had advanced and the push was refused (non-fast-forward). Subsequent docs deployments kept failing until the branch was force-updated.",
+      "tags": [
+        "mkdocs",
+        "gh-pages",
+        "gh-deploy",
+        "force",
+        "ci-cd",
+        "github-actions",
+        "documentation",
+        "non-fast-forward"
+      ],
+      "title": "Fix mkdocs gh-deploy refusal when the generated gh-pages branch has advanced",
+      "top_keywords": [
+        "gh-pages",
+        "--force",
+        "gh-deploy",
+        "mkdocs",
+        "mkdocs gh-deploy",
+        "mkdocs build --strict",
+        "branch",
+        "generated",
+        "advanced",
+        "refusal"
       ]
     },
     {
@@ -672,7 +759,7 @@
       "entity_type": "feature",
       "path": "roadmap.json#pypi-publishing-and-ci-cd",
       "slug": "pypi-publishing-and-ci-cd",
-      "status": "active",
+      "status": "done",
       "summary": "PyPI publishing and CI/CD",
       "tags": [],
       "title": "PyPI publishing and CI/CD",
@@ -778,11 +865,31 @@
       ]
     }
   ],
-  "entity_count": 30,
+  "entity_count": 33,
   "generated": "2026-08-17",
   "schema_version": "0.2.0",
   "topic_count": 4,
   "topics": [
+    {
+      "entity_count": 8,
+      "entity_paths": [
+        ".cg-docs/brainstorms/2026-04-01-documentation-website.md",
+        ".cg-docs/plans/2026-04-01-documentation-website.md",
+        ".cg-docs/reviews/2026-04-01-documentation-website-light-review.md",
+        ".cg-docs/reviews/2026-04-01-documentation-website-review.md",
+        ".cg-docs/reviews/2026-08-17-pypi-publication-review.md",
+        ".cg-docs/solutions/build-errors/2026-04-01-pep735-dependency-groups-pip-incompatible.md",
+        ".cg-docs/solutions/git-workflows/2026-04-01-mkdocs-github-pages-uv-production-pattern.md",
+        ".cg-docs/solutions/git-workflows/2026-08-17-mkdocs-gh-pages-advanced-force.md"
+      ],
+      "keywords": [
+        "gen_ref_pages.py",
+        "mkdocs.yml",
+        "--force"
+      ],
+      "label": "Gen_Ref_Pages.Py / Mkdocs.Yml / --Force",
+      "slug": "gen-ref-pages-py-mkdocs-yml-force"
+    },
     {
       "entity_count": 6,
       "entity_paths": [
@@ -800,24 +907,6 @@
       ],
       "label": "Functions / Core / Wrapper",
       "slug": "functions-core-wrapper"
-    },
-    {
-      "entity_count": 6,
-      "entity_paths": [
-        ".cg-docs/brainstorms/2026-04-01-documentation-website.md",
-        ".cg-docs/plans/2026-04-01-documentation-website.md",
-        ".cg-docs/reviews/2026-04-01-documentation-website-light-review.md",
-        ".cg-docs/reviews/2026-04-01-documentation-website-review.md",
-        ".cg-docs/solutions/build-errors/2026-04-01-pep735-dependency-groups-pip-incompatible.md",
-        ".cg-docs/solutions/git-workflows/2026-04-01-mkdocs-github-pages-uv-production-pattern.md"
-      ],
-      "keywords": [
-        "gen_ref_pages.py",
-        "mkdocs.yml",
-        ".gitignore"
-      ],
-      "label": "Gen_Ref_Pages.Py / Mkdocs.Yml / .Gitignore",
-      "slug": "gen-ref-pages-py-mkdocs-yml-gitignore"
     },
     {
       "entity_count": 3,
