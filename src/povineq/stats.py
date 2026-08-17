@@ -2,15 +2,36 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal, cast
 
 import pandas as pd
 from loguru import logger
 
 from povineq._constants import API_VERSION, ENDPOINT_PIP, ENDPOINT_PIP_GRP
 from povineq._request import build_and_execute
-from povineq._response import PIPResponse, parse_response
-from povineq._validation import AggParams, StatsParams
+from povineq._response import DataFrameLike, PIPResponse, parse_response
+from povineq._validation import AggParams, StatsParams, WbParams
+
+
+def _filter_nowcast_rows(
+    data: DataFrameLike,
+    dataframe_type: Literal["pandas", "polars"],
+) -> DataFrameLike:
+    """Remove nowcast rows while preserving the requested dataframe backend."""
+    if isinstance(data, pd.DataFrame):
+        if "estimate_type" in data.columns:
+            return data[~data["estimate_type"].str.contains("nowcast", na=False)].copy()
+        return data
+
+    if dataframe_type == "polars":
+        import polars as pl
+
+        polars_data = cast(Any, data)
+        if "estimate_type" in polars_data.columns:
+            mask = pl.col("estimate_type").str.contains("nowcast").fill_null(False)
+            return cast(DataFrameLike, polars_data.filter(~mask))
+
+    return data
 
 
 def get_stats(
@@ -21,17 +42,17 @@ def get_stats(
     fill_gaps: bool = False,
     nowcast: bool = False,
     subgroup: str | None = None,
-    welfare_type: str = "all",
-    reporting_level: str = "all",
+    welfare_type: Literal["all", "income", "consumption"] = "all",
+    reporting_level: Literal["all", "national", "urban", "rural"] = "all",
     version: str | None = None,
     ppp_version: int | None = None,
     release_version: str | None = None,
-    api_version: str = API_VERSION,
-    fmt: str = "arrow",
+    api_version: Literal["v1"] = API_VERSION,
+    fmt: Literal["arrow", "json", "csv"] = "arrow",
     simplify: bool = True,
     server: str | None = None,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
+) -> DataFrameLike | PIPResponse:
     """Get poverty and inequality statistics from the PIP API.
 
     This is the primary function for querying household survey-based poverty
@@ -126,13 +147,15 @@ def get_stats(
 
     response = build_and_execute(endpoint, query, server=server, api_version=api_version)
 
-    out = parse_response(response, simplify=simplify, dataframe_type=dataframe_type)
+    out = cast(
+        DataFrameLike | PIPResponse,
+        parse_response(response, simplify=simplify, dataframe_type=dataframe_type),
+    )
 
     # When fill_gaps=False (and simplify=True) filter out nowcast rows
     # pipr does this because estimate_type is only returned when fill_gaps=True
-    if params.nowcast is False and simplify and isinstance(out, pd.DataFrame):
-        if "estimate_type" in out.columns:
-            out = out[~out["estimate_type"].str.contains("nowcast", na=False)].copy()
+    if params.nowcast is False and simplify and not isinstance(out, PIPResponse):
+        out = _filter_nowcast_rows(out, dataframe_type)
 
     return out
 
@@ -143,12 +166,12 @@ def get_wb(
     version: str | None = None,
     ppp_version: int | None = None,
     release_version: str | None = None,
-    api_version: str = API_VERSION,
-    fmt: str = "json",
+    api_version: Literal["v1"] = API_VERSION,
+    fmt: Literal["json", "csv"] = "json",
     simplify: bool = True,
     server: str | None = None,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
+) -> DataFrameLike | PIPResponse:
     """Get World Bank regional and global aggregate statistics.
 
     Shorthand for ``get_stats(subgroup="wb_regions")``.
@@ -173,27 +196,26 @@ def get_wb(
         >>> import povineq
         >>> df = povineq.get_wb()
     """
-    query: dict[str, str] = {}
-    if year != "all":
-        query["year"] = ",".join(str(y) for y in year) if isinstance(year, list) else str(year)
-    else:
-        query["year"] = "all"
-
-    if povline is not None:
-        query["povline"] = str(povline)
-    if version is not None:
-        query["version"] = version
-    if ppp_version is not None:
-        query["ppp_version"] = str(ppp_version)
-    if release_version is not None:
-        query["release_version"] = release_version
-    query["format"] = fmt
+    params = WbParams(
+        year=year,
+        povline=povline,
+        version=version,
+        ppp_version=ppp_version,
+        release_version=release_version,
+        api_version=api_version,
+        format=fmt,
+    )
+    query = params.to_query_params()
+    query.pop("api_version", None)
     query["group_by"] = "wb"
 
     response = build_and_execute(
-        ENDPOINT_PIP_GRP, query, server=server, api_version=api_version
+        ENDPOINT_PIP_GRP, query, server=server, api_version=params.api_version
     )
-    return parse_response(response, simplify=simplify, dataframe_type=dataframe_type)
+    return cast(
+        DataFrameLike | PIPResponse,
+        parse_response(response, simplify=simplify, dataframe_type=dataframe_type),
+    )
 
 
 def get_agg(
@@ -203,12 +225,12 @@ def get_agg(
     ppp_version: int | None = None,
     release_version: str | None = None,
     aggregate: str | None = None,
-    api_version: str = API_VERSION,
-    fmt: str = "json",
+    api_version: Literal["v1"] = API_VERSION,
+    fmt: Literal["json", "csv"] = "json",
     simplify: bool = True,
     server: str | None = None,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
+) -> DataFrameLike | PIPResponse:
     """Get custom aggregate statistics (FCV, regional, vintage, etc.).
 
     Mirrors ``pipr::get_agg()``.
@@ -250,4 +272,7 @@ def get_agg(
     response = build_and_execute(
         ENDPOINT_PIP_GRP, query, server=server, api_version=api_version
     )
-    return parse_response(response, simplify=simplify, dataframe_type=dataframe_type)
+    return cast(
+        DataFrameLike | PIPResponse,
+        parse_response(response, simplify=simplify, dataframe_type=dataframe_type),
+    )

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import Literal
+from typing import Literal, cast
 
 import pandas as pd
 from loguru import logger
@@ -14,7 +14,7 @@ from povineq._constants import (
     ENDPOINT_CP_KEY_INDICATORS,
 )
 from povineq._request import build_and_execute
-from povineq._response import PIPResponse, parse_response
+from povineq._response import DataFrameLike, PIPResponse, _to_target_type, parse_response
 from povineq._validation import CpKiParams, CpParams
 
 
@@ -24,12 +24,12 @@ def get_cp(
     version: str | None = None,
     ppp_version: int = 2017,
     release_version: str | None = None,
-    api_version: str = API_VERSION,
-    fmt: str = "arrow",
+    api_version: Literal["v1"] = API_VERSION,
+    fmt: Literal["arrow", "json", "csv"] = "arrow",
     simplify: bool = True,
     server: str | None = None,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
+) -> DataFrameLike | PIPResponse:
     """Download country profile data.
 
     Mirrors ``pipr::get_cp()``.
@@ -75,7 +75,10 @@ def get_cp(
     response = build_and_execute(
         ENDPOINT_CP_DOWNLOAD, query, server=server, api_version=api_version
     )
-    return parse_response(response, simplify=simplify, dataframe_type=dataframe_type)
+    return cast(
+        DataFrameLike | PIPResponse,
+        parse_response(response, simplify=simplify, dataframe_type=dataframe_type),
+    )
 
 
 def get_cp_ki(
@@ -84,11 +87,11 @@ def get_cp_ki(
     version: str | None = None,
     ppp_version: int = 2017,
     release_version: str | None = None,
-    api_version: str = API_VERSION,
+    api_version: Literal["v1"] = API_VERSION,
     simplify: bool = True,
     server: str | None = None,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | PIPResponse:
+) -> DataFrameLike | PIPResponse:
     """Get country profile key indicators.
 
     Mirrors ``pipr::get_cp_ki()``. When *simplify* is ``True``,
@@ -142,9 +145,12 @@ def get_cp_ki(
     # parse_response (simplify=False) wraps it in a PIPResponse.
     if simplify:
         raw = json.loads(response.text)
-        return unnest_ki(raw)
+        return cast(DataFrameLike, _to_target_type(unnest_ki(raw), dataframe_type))
 
-    return parse_response(response, simplify=False, dataframe_type=dataframe_type)
+    return cast(
+        DataFrameLike | PIPResponse,
+        parse_response(response, simplify=False, dataframe_type=dataframe_type),
+    )
 
 
 def unnest_ki(raw: dict | list) -> pd.DataFrame:

@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, cast
 
-import pandas as pd
 from loguru import logger
 
 from povineq._constants import (
@@ -14,11 +13,12 @@ from povineq._constants import (
     ENDPOINT_VERSIONS,
 )
 from povineq._request import build_and_execute
-from povineq._response import parse_response
+from povineq._response import DataFrameLike, PIPResponse, parse_response
+from povineq._validation import validate_api_version
 
 
 def check_api(
-    api_version: str = API_VERSION,
+    api_version: Literal["v1"] = API_VERSION,
     server: str | None = None,
 ) -> dict:
     """Test connectivity to the PIP API.
@@ -42,6 +42,7 @@ def check_api(
         >>> status = povineq.check_api()
     """
     logger.debug("check_api()")
+    api_version = validate_api_version(api_version)
     response = build_and_execute(ENDPOINT_HEALTH_CHECK, {}, server=server, api_version=api_version)
     result = parse_response(response, simplify=False, is_raw=True)
     if isinstance(result, dict):
@@ -50,11 +51,11 @@ def check_api(
 
 
 def get_versions(
-    api_version: str = API_VERSION,
+    api_version: Literal["v1"] = API_VERSION,
     server: str | None = None,
     simplify: bool = True,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
-) -> pd.DataFrame | dict | list:
+) -> DataFrameLike | PIPResponse:
     """List available data versions.
 
     Mirrors ``pipr::get_versions()``.
@@ -67,19 +68,23 @@ def get_versions(
 
     Returns:
         A DataFrame of available versions when *simplify* is ``True``,
-        or the raw dict/list otherwise.
+        or a :class:`~povineq._response.PIPResponse` when *simplify* is ``False``.
 
     Example:
         >>> import povineq
         >>> df = povineq.get_versions()
     """
     logger.debug("get_versions()")
+    api_version = validate_api_version(api_version)
     response = build_and_execute(ENDPOINT_VERSIONS, {}, server=server, api_version=api_version)
-    return parse_response(response, simplify=simplify, dataframe_type=dataframe_type)
+    return cast(
+        DataFrameLike | PIPResponse,
+        parse_response(response, simplify=simplify, dataframe_type=dataframe_type),
+    )
 
 
 def get_pip_info(
-    api_version: str = API_VERSION,
+    api_version: Literal["v1"] = API_VERSION,
     server: str | None = None,
 ) -> dict:
     """Get metadata about the PIP API.
@@ -98,6 +103,7 @@ def get_pip_info(
         >>> info = povineq.get_pip_info()
     """
     logger.debug("get_pip_info()")
+    api_version = validate_api_version(api_version)
     response = build_and_execute(ENDPOINT_PIP_INFO, {}, server=server, api_version=api_version)
     result = parse_response(response, simplify=False, is_raw=True)
     if isinstance(result, dict):

@@ -64,8 +64,8 @@
         {
           "id": "pypi-publishing-and-ci-cd",
           "title": "PyPI publishing and CI/CD",
-          "status": "planned",
-          "plan": ".cg-docs/plans/2026-03-31-povineq-v1-full-implementation.md"
+          "status": "active",
+          "plan": ".cg-docs/plans/2026-08-17-pypi-publication-release-readiness.md"
         },
         {
           "id": "documentation-website-mkdocs-material",

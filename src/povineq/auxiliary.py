@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import Literal
+from typing import Any, Literal, Protocol, cast
 
 import pandas as pd
 from loguru import logger
@@ -12,8 +11,42 @@ from povineq._aux_store import call_aux as _call_aux_store
 from povineq._aux_store import set_aux
 from povineq._constants import API_VERSION, ENDPOINT_AUX
 from povineq._request import build_and_execute
-from povineq._response import PIPResponse, parse_response
+from povineq._response import DataFrameLike, PIPResponse, PolarsDataFrame, parse_response
 from povineq._validation import AuxParams
+
+
+class AuxGetter(Protocol):
+    """Typed callable contract for generated auxiliary table getters."""
+
+    def __call__(
+        self,
+        version: str | None = None,
+        ppp_version: int | None = None,
+        release_version: str | None = None,
+        api_version: Literal["v1"] = API_VERSION,
+        fmt: Literal["json", "csv"] = "json",
+        simplify: bool = True,
+        server: str | None = None,
+        dataframe_type: Literal["pandas", "polars"] = "pandas",
+    ) -> DataFrameLike | PIPResponse:
+        """Fetch one named auxiliary table."""
+        ...
+
+
+def _table_names(result: DataFrameLike) -> list[str] | None:
+    """Extract the auxiliary catalog from either supported dataframe backend."""
+    if isinstance(result, pd.DataFrame) and "tables" in result.columns:
+        raw: Any = result["tables"].iloc[0]
+        values = raw if isinstance(raw, list) else result["tables"].tolist()
+        return [str(value) for value in values]
+
+    polars_result = cast(PolarsDataFrame, result)
+    if "tables" in polars_result.columns:
+        values = polars_result.get_column("tables").to_list()
+        if values:
+            raw = values[0]
+            return [str(value) for value in raw] if isinstance(raw, list) else [str(raw)]
+    return None
 
 
 def get_aux(
@@ -21,14 +54,14 @@ def get_aux(
     version: str | None = None,
     ppp_version: int | None = None,
     release_version: str | None = None,
-    api_version: str = API_VERSION,
-    fmt: str = "json",
+    api_version: Literal["v1"] = API_VERSION,
+    fmt: Literal["json", "csv"] = "json",
     simplify: bool = True,
     server: str | None = None,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
     assign_tb: bool | str = False,
     replace: bool = False,
-) -> pd.DataFrame | list[str] | PIPResponse | bool:
+) -> DataFrameLike | list[str] | PIPResponse | bool:
     """Fetch an auxiliary dataset from the PIP API.
 
     When no *table* is specified, returns a list of available table names.
@@ -81,24 +114,29 @@ def get_aux(
             query["release_version"] = release_version
 
         response = build_and_execute(ENDPOINT_AUX, query, server=server, api_version=api_version)
-        result = parse_response(response, simplify=simplify, dataframe_type=dataframe_type)
+        result = cast(
+            DataFrameLike | PIPResponse,
+            parse_response(response, simplify=simplify, dataframe_type=dataframe_type),
+        )
 
-        if simplify and isinstance(result, pd.DataFrame) and "tables" in result.columns:
-            # pd.json_normalize packs {"tables": [...]} into a single-row df;
-            # the cell value is the list itself — unwrap it when needed.
-            raw = result["tables"].iloc[0]
-            tables_list: list[str] = raw if isinstance(raw, list) else result["tables"].tolist()
+        if simplify and not isinstance(result, PIPResponse):
+            tables_list = _table_names(result)
+            if tables_list is None:
+                return result
             logger.info("Available auxiliary tables", tables=tables_list)
             return tables_list
 
-        return result  # type: ignore[return-value]
+        return result
 
     # Fetch specific table
     query = params.to_query_params()
     query.pop("api_version", None)
 
     response = build_and_execute(ENDPOINT_AUX, query, server=server, api_version=api_version)
-    rt = parse_response(response, simplify=simplify, dataframe_type=dataframe_type)
+    rt = cast(
+        DataFrameLike | PIPResponse,
+        parse_response(response, simplify=simplify, dataframe_type=dataframe_type),
+    )
 
     if assign_tb is not False:
         tb_name: str
@@ -109,23 +147,25 @@ def get_aux(
         else:
             raise ValueError("assign_tb must be a bool or a string.")
 
-        if not isinstance(rt, pd.DataFrame):
+        if isinstance(rt, pd.DataFrame):
+            return set_aux(tb_name, rt, replace=replace)
+        if dataframe_type == "polars" and not isinstance(rt, PIPResponse):
+            return set_aux(tb_name, cast(PolarsDataFrame, rt).to_pandas(), replace=replace)
+        if isinstance(rt, PIPResponse):
             logger.warning(
                 "assign_tb requires simplify=True to store the table in memory; "
                 "got a PIPResponse object. The table was NOT stored."
             )
-        elif isinstance(rt, pd.DataFrame):
-            return set_aux(tb_name, rt, replace=replace)
 
-    return rt  # type: ignore[return-value]
+    return rt
 
 
 def display_aux(
     version: str | None = None,
     ppp_version: int | None = None,
     release_version: str | None = None,
-    api_version: str = API_VERSION,
-    fmt: str = "json",
+    api_version: Literal["v1"] = API_VERSION,
+    fmt: Literal["json", "csv"] = "json",
     simplify: bool = True,
     server: str | None = None,
 ) -> pd.DataFrame | list[str]:
@@ -150,22 +190,25 @@ def display_aux(
         >>> import povineq
         >>> povineq.display_aux()
     """
-    result = get_aux(
-        table=None,
-        version=version,
-        ppp_version=ppp_version,
-        release_version=release_version,
-        api_version=api_version,
-        fmt=fmt,
-        simplify=simplify,
-        server=server,
+    result = cast(
+        pd.DataFrame | list[str],
+        get_aux(
+            table=None,
+            version=version,
+            ppp_version=ppp_version,
+            release_version=release_version,
+            api_version=api_version,
+            fmt=fmt,
+            simplify=simplify,
+            server=server,
+        ),
     )
 
     if isinstance(result, list):
         logger.info("Available auxiliary tables", tables=result)
         return result
 
-    return result  # type: ignore[return-value]
+    return result
 
 
 def call_aux(table: str | None = None) -> pd.DataFrame | list[str]:
@@ -190,7 +233,7 @@ def call_aux(table: str | None = None) -> pd.DataFrame | list[str]:
     return _call_aux_store(table)
 
 
-def _make_aux_getter(table_name: str, table_description: str) -> Callable:
+def _make_aux_getter(table_name: str, table_description: str) -> AuxGetter:
     """Factory that generates a typed convenience wrapper around :func:`get_aux`.
 
     Each generated function fetches a single named auxiliary table and documents
@@ -211,22 +254,25 @@ def _make_aux_getter(table_name: str, table_description: str) -> Callable:
         version: str | None = None,
         ppp_version: int | None = None,
         release_version: str | None = None,
-        api_version: str = API_VERSION,
-        fmt: str = "json",
+        api_version: Literal["v1"] = API_VERSION,
+        fmt: Literal["json", "csv"] = "json",
         simplify: bool = True,
         server: str | None = None,
         dataframe_type: Literal["pandas", "polars"] = "pandas",
-    ) -> pd.DataFrame | PIPResponse:
-        return get_aux(
-            table=table_name,
-            version=version,
-            ppp_version=ppp_version,
-            release_version=release_version,
-            api_version=api_version,
-            fmt=fmt,
-            simplify=simplify,
-            server=server,
-            dataframe_type=dataframe_type,
+    ) -> DataFrameLike | PIPResponse:
+        return cast(
+            DataFrameLike | PIPResponse,
+            get_aux(
+                table=table_name,
+                version=version,
+                ppp_version=ppp_version,
+                release_version=release_version,
+                api_version=api_version,
+                fmt=fmt,
+                simplify=simplify,
+                server=server,
+                dataframe_type=dataframe_type,
+            ),
         )
 
     _getter.__name__ = f"get_{table_name}"

@@ -1,15 +1,9 @@
-# Compound GPID managed items (junctions + copied file - do not commit)
-.github/prompts/
-.github/skills/
-.github/agents/
-.github/instructions/
-.github/copilot-instructions.md
 
 # Compound GPID local config (user-specific, never commit)
 compound-gpid.local.md
 
 # Compound GPID knowledge artifacts — committed except machine-local files
-.cg-docs/**/*.local.md
+**/*.local.md
 
 # Python build artefacts
 __pycache__/
@@ -18,6 +12,10 @@ __pycache__/
 dist/
 build/
 .eggs/
+.mypy_cache/
+.ruff_cache/
+.env
+.env.*
 
 # MkDocs build output
 site/
@@ -37,3 +35,37 @@ env/
 # Editor / OS
 .DS_Store
 
+# Compound GPID managed items (junctions + copied file - do not commit)
+.agents/AGENTS.md
+.agents/commands
+.agents/instructions
+.agents/shared
+.agents/skills
+.agents/subagents
+.claude/CLAUDE.md
+.claude/agents
+.claude/commands
+.claude/instructions
+.claude/shared
+.claude/skills
+.compound-gpid/managed-files.json
+.github/agents
+.github/copilot-instructions.md
+.github/instructions
+.github/prompts
+.github/shared
+.github/skills
+.kilo/AGENTS.md
+.kilo/agents
+.kilo/commands
+.kilo/instructions
+.kilo/kilo.json
+.kilo/shared
+.kilo/skills
+.opencode/AGENTS.md
+.opencode/agents
+.opencode/commands
+.opencode/instructions
+.opencode/opencode.json
+.opencode/shared
+.opencode/skills

@@ -1,15 +1,14 @@
 # Caching and Performance
 
-`povineq` caches HTTP responses on disk so that repeated calls to the PIP API
-return instantly without hitting the network. This page explains how the cache
-works and how to manage it.
+`povineq` currently uses HTTP connection pooling and transport retries. The
+cache-directory helpers are retained for local cache management, but the active
+HTTP client does not persist or replay API responses.
 
 ---
 
 ## How the Cache Works
 
-Every successful API response is stored in a platform-appropriate cache
-directory:
+The cache directory is platform-appropriate:
 
 | OS | Default location |
 |---|---|
@@ -17,15 +16,13 @@ directory:
 | Linux | `~/.cache/povineq/` |
 | Windows | `%LOCALAPPDATA%\povineq\Cache\` |
 
-The cache key is derived from the full request URL (including all query
-parameters). If you call the same function with the same arguments twice, the
-second call reads from disk — no network request is made.
+The current request layer does not write response files to this directory.
 
 ---
 
 ## Inspecting the Cache
 
-Use `get_cache_info()` to see how many files are cached and how much disk space
+Use `get_cache_info()` to see how many files are in the cache directory and how much disk space
 they use:
 
 ```python
@@ -33,7 +30,7 @@ import povineq
 
 info = povineq.get_cache_info()
 print(info["path"])        # path to the cache directory
-print(info["n_files"])     # number of cached responses
+print(info["n_files"])     # number of files in the cache directory
 print(info["total_bytes"]) # total size in bytes
 ```
 
@@ -41,7 +38,7 @@ print(info["total_bytes"]) # total size in bytes
 
 ## Clearing the Cache
 
-Delete all cached responses with `delete_cache()`:
+Delete all files in the managed cache directory with `delete_cache()`:
 
 ```python
 import povineq
@@ -49,32 +46,27 @@ import povineq
 povineq.delete_cache()
 ```
 
-This removes the entire cache directory and recreates an empty one. The next
-API call will fetch fresh data from the server.
+This removes the managed cache directory and recreates an empty one. The active
+HTTP client does not currently write response files there.
 
 !!! tip
-    Clear the cache when a new PIP data version is released to ensure you are
-    working with the latest estimates. You can also pin a specific version using
-    the `version` parameter in `get_stats()` and other functions.
+    Use the `version` or `release_version` parameter in `get_stats()` and other
+    functions to request a specific PIP data release.
 
 ---
 
-## Bypassing the Cache
+## Request Versions
 
-To force a fresh request without clearing the entire cache, pin a specific
-`release_version`:
+To request a specific data release, pin `release_version`:
 
 ```python
 import povineq
 
-# Forces a new request because the version string is part of the cache key
 df = povineq.get_stats(
     country="IDN",
     release_version="20240101",
 )
 ```
-
-Alternatively, `delete_cache()` before the call.
 
 ---
 

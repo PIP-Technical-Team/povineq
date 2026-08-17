@@ -57,6 +57,13 @@ class TestGetAuxNoTable:
             result = get_aux(simplify=False)
         assert isinstance(result, PIPResponse)
 
+    def test_no_table_polars_still_returns_names(self):
+        pytest.importorskip("polars")
+        resp = _mock_resp({"tables": ["countries", "gdp"]})
+        with patch("povineq.auxiliary.build_and_execute", return_value=resp):
+            result = get_aux(dataframe_type="polars")
+        assert result == ["countries", "gdp"]
+
 
 class TestGetAuxWithTable:
     def test_gdp_table(self):
@@ -81,6 +88,16 @@ class TestGetAuxWithTable:
         with patch("povineq.auxiliary.build_and_execute", return_value=resp):
             get_aux("gdp", assign_tb="my_gdp")
         assert "my_gdp" in _store
+
+    def test_assign_tb_polars_converts_for_store(self):
+        pytest.importorskip("polars")
+        data = [{"country_code": "AGO", "gdp": 3000.0}]
+        resp = _mock_resp(data)
+        with patch("povineq.auxiliary.build_and_execute", return_value=resp):
+            result = get_aux("gdp", assign_tb=True, dataframe_type="polars")
+        assert result is True
+        assert "gdp" in _store
+        assert isinstance(_store["gdp"], pd.DataFrame)
 
     def test_assign_tb_invalid_raises(self):
         data = [{"a": 1}]

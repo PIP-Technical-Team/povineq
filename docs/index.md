@@ -19,8 +19,8 @@ the same parameter conventions, the same return shapes.
   summaries via `get_cp()` and `get_cp_ki()`.
 - **Auxiliary data** — GDP, CPI, PPP, population, survey metadata, and coverage
   tables via `get_aux()` and its per-table convenience wrappers.
-- **Auto-caching** — HTTP responses are cached locally so repeated calls are
-  instant. Manage the cache with `delete_cache()` and `get_cache_info()`.
+- **Connection pooling and retries** — HTTP requests reuse connections and retry
+  transient transport failures. Cache-directory helpers are available separately.
 - **pandas *or* polars** — every function that returns a DataFrame accepts a
   `dataframe_type` argument so you can work with either library.
 - **Typed errors** — `PIPError`, `PIPAPIError`, `PIPRateLimitError`, and
@@ -30,19 +30,34 @@ the same parameter conventions, the same return shapes.
 
 ## Installation
 
-!!! warning "Not available on PyPI"
-    `povineq` is under active development and has **not been released to PyPI yet**.
-    Install directly from GitHub:
+!!! note "First release pending"
+    The first PyPI release is being prepared. Install from PyPI only after
+    publication:
 
-```bash
-pip install git+https://github.com/PIP-Technical-Team/povineq.git
-```
+    ```bash
+    pip install povineq
+    ```
 
 For optional [polars](https://pola.rs/) support:
 
 ```bash
+pip install "povineq[polars]"
+```
+
+The package supports Python 3.10 through 3.13. For unreleased development
+versions, install from GitHub:
+
+```bash
+pip install git+https://github.com/PIP-Technical-Team/povineq.git
 pip install "povineq[polars] @ git+https://github.com/PIP-Technical-Team/povineq.git"
 ```
+
+Releases are validated and published by `.github/workflows/publish.yml` using
+PyPI trusted publishing. The self-service `pypi` environment is restricted to
+protected `v*` tags. Before the first release, register owner
+`PIP-Technical-Team`, repository `povineq`, workflow `publish.yml`, and
+environment `pypi` as PyPI's pending trusted publisher. No credentials belong
+in the documentation or repository.
 
 ---
 

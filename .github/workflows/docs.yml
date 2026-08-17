@@ -10,6 +10,9 @@ on:
       - "pyproject.toml"
   workflow_dispatch:
 
+env:
+  UV_DEFAULT_INDEX: https://pypi.org/simple
+
 concurrency:
   group: deploy-docs
   cancel-in-progress: true
@@ -21,26 +24,26 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v4
+        uses: astral-sh/setup-uv@e4db8464a088ece1b920f60402e813ea4de65b8f # v4
         with:
           version: "0.10.2"
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: uv sync --extra docs
+        run: uv lock --check && uv sync --locked --no-default-groups --group docs
 
       - name: Build docs
-        run: uv run mkdocs build --strict
+        run: uv run --locked mkdocs build --strict
 
       - name: Validate generated reference pages
         run: python -c "import pathlib; pages = list(pathlib.Path('site/reference').glob('*.html')); assert pages, 'Reference pages missing from site/reference/'"
 
       - name: Deploy docs
-        run: uv run mkdocs gh-deploy
+        run: uv run --locked mkdocs gh-deploy

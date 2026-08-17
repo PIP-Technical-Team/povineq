@@ -5,7 +5,7 @@ from __future__ import annotations
 import io
 import json
 from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal, Protocol, TypeAlias, cast
 
 import httpx
 import pandas as pd
@@ -16,6 +16,20 @@ from loguru import logger
 from povineq._constants import COLUMN_RENAMES
 from povineq._errors import PIPError
 from povineq.utils import change_grouped_stats_to_csv, rename_cols
+
+
+class PolarsDataFrame(Protocol):
+    """Structural type for the optional Polars DataFrame output."""
+
+    @property
+    def columns(self) -> list[str]: ...
+
+    def get_column(self, name: str) -> Any: ...
+
+    def to_pandas(self) -> pd.DataFrame: ...
+
+
+DataFrameLike: TypeAlias = pd.DataFrame | PolarsDataFrame
 
 
 @dataclass
@@ -35,7 +49,7 @@ class PIPResponse:
     url: str
     status: int
     content_type: str
-    content: pd.DataFrame
+    content: DataFrameLike
     response: httpx.Response
 
 
@@ -70,10 +84,12 @@ def _parse_json(text: str, is_raw: bool = False) -> pd.DataFrame | dict | list:
     Returns:
         Parsed data as a DataFrame (or raw dict/list when *is_raw*).
     """
-    data = json.loads(text)
+    data: object = json.loads(text)
 
     if is_raw:
-        return data
+        if isinstance(data, (dict, list)):
+            return data
+        return {"value": data}
 
     if isinstance(data, list):
         return pd.DataFrame(data)
@@ -117,7 +133,7 @@ def _apply_post_processing(df: pd.DataFrame) -> pd.DataFrame:
 def _to_target_type(
     data: pa.Table | pd.DataFrame,
     dataframe_type: Literal["pandas", "polars"],
-) -> pd.DataFrame:
+) -> DataFrameLike:
     """Convert data to the requested DataFrame type.
 
     Accepts either a :class:`~pyarrow.Table` (for zero-copy polars conversion)
@@ -134,20 +150,24 @@ def _to_target_type(
 
     Raises:
         ImportError: If polars is requested but not installed.
+        ValueError: If *dataframe_type* is unsupported.
     """
+    if dataframe_type not in ("pandas", "polars"):
+        raise ValueError("dataframe_type must be 'pandas' or 'polars'")
+
     if dataframe_type == "polars":
         try:
             import polars as pl
 
             if isinstance(data, pa.Table):
-                return pl.from_arrow(data)  # zero-copy path
-            return pl.from_pandas(data)
+                return cast(DataFrameLike, pl.from_arrow(data))  # zero-copy path
+            return cast(DataFrameLike, pl.from_pandas(data))
         except ImportError as exc:
             raise ImportError(
                 "polars is not installed. Run: pip install povineq[polars]"
             ) from exc
     if isinstance(data, pa.Table):
-        return data.to_pandas()
+        return cast(pd.DataFrame, data.to_pandas())
     return data
 
 
@@ -156,7 +176,7 @@ def parse_response(
     simplify: bool = True,
     dataframe_type: Literal["pandas", "polars"] = "pandas",
     is_raw: bool = False,
-) -> pd.DataFrame | PIPResponse | dict | list:
+) -> DataFrameLike | PIPResponse | dict[Any, Any] | list[Any]:
     """Parse an HTTP response from the PIP API.
 
     Dispatches to the appropriate format parser based on the
@@ -179,6 +199,7 @@ def parse_response(
         PIPError: If the response Content-Type is not supported.
     """
     content_type = response.headers.get("content-type", "")
+    parsed: pd.DataFrame | dict[Any, Any] | list[Any]
 
     if "application/vnd.apache.arrow.file" in content_type:
         table: pa.Table = _parse_arrow(response.content)
@@ -189,11 +210,10 @@ def parse_response(
             renamed_names = [COLUMN_RENAMES.get(name, name) for name in table.schema.names]
             table = table.rename_columns(renamed_names)
             return _to_target_type(table, dataframe_type)
-        parsed: pd.DataFrame | dict | list = table.to_pandas()
-        if isinstance(parsed, pd.DataFrame):
-            parsed = rename_cols(
-                parsed, list(COLUMN_RENAMES.keys()), list(COLUMN_RENAMES.values())
-            )
+        arrow_df: pd.DataFrame = table.to_pandas()
+        parsed = rename_cols(
+            arrow_df, list(COLUMN_RENAMES.keys()), list(COLUMN_RENAMES.values())
+        )
 
     elif "application/json" in content_type:
         parsed = _parse_json(response.text, is_raw=is_raw)
@@ -213,14 +233,14 @@ def parse_response(
         raise PIPError(f"Unsupported Content-Type: {content_type!r}")
 
     # simplify=False path
-    if isinstance(parsed, pd.DataFrame):
-        parsed = _apply_post_processing(parsed)
-        parsed = _to_target_type(parsed, dataframe_type)
+    if not isinstance(parsed, pd.DataFrame):
+        raise PIPError("Expected tabular data for a non-raw response.")
+    content = _to_target_type(_apply_post_processing(parsed), dataframe_type)
 
     return PIPResponse(
         url=str(response.url),
         status=response.status_code,
         content_type=content_type,
-        content=parsed,  # type: ignore[arg-type]
+        content=content,
         response=response,
     )
